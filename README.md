@@ -1,8 +1,8 @@
-# 🛒 Orebi Shopping - Full Stack E-commerce Platform
+# 🛒 MuaNhanh - Full Stack E-commerce Platform
 
 A complete, production-ready e-commerce solution built with modern technologies including React.js, Node.js, Express, MongoDB, Redux Toolkit, Tailwind CSS, and Stripe payment integration.
 
-![Orebi Shopping Platform](./public/thumbnail.png)
+![MuaNhanh Shopping Platform](./public/thumbnail.png)
 
 ## 🌟 Features
 
@@ -301,36 +301,8 @@ If you encounter any issues:
 3. Ensure all dependencies are installed
 4. Check that all required services (MongoDB, Cloudinary, Stripe) are properly configured
 
-## 🎉 What You Get
-
-After purchase, you'll receive:
-
-- ✅ Complete source code for all three applications
-- ✅ This comprehensive setup guide
-- ✅ Database seed scripts with sample data
-- ✅ Production-ready configuration
-- ✅ API documentation
-- ✅ Admin panel with full management features
-- ✅ Customer-facing e-commerce website
-- ✅ Payment integration (Stripe + PayPal)
-- ✅ Email notification system
-- ✅ Image upload functionality
-- ✅ Responsive design for all devices
-
-## 🌟 Perfect For
-
-- **Entrepreneurs** starting an e-commerce business
-- **Developers** learning full-stack development
-- **Students** working on projects
-- **Agencies** needing a quick e-commerce solution
-- **Freelancers** delivering client projects
-
-## 💰 Purchase
-
-Get the complete source code at: **[Your BuyMeACoffee Link]**
-
 ---
 
-**Built with ❤️ by [Your Name]**
+**Built with ❤️ by Trieu Thien**
 
-_Need custom modifications or have questions? Contact me at [your-email@example.com]_
+_Need custom modifications or have questions? Contact me at [devsoftware.official@gmail.com]_
