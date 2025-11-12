@@ -2,7 +2,7 @@
 
 A complete, production-ready e-commerce solution built with modern technologies including React.js, Node.js, Express, MongoDB, Redux Toolkit, Tailwind CSS, and Stripe payment integration.
 
-![MuaNhanh Shopping Platform](./public/thumbnail.png)
+![MuaNhanh Shopping Platform](public/thumbnail.png)
 
 ## 🌟 Features
 
