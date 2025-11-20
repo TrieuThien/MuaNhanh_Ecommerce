@@ -25,17 +25,17 @@ const contactInfo = [
   {
     icon: <FaMapMarkerAlt />,
     title: "Visit Our Store",
-    content: ["613 Au Co Street", "Hồ Chí Minh, HCM 00700", "Vietnam"],
+    content: ["613 Au Co Street", "Ho Chi Minh, HCM 00700", "Vietnam"],
   },
   {
     icon: <FaPhone />,
     title: "Call Us",
-    content: ["Tel: (84) 986.126.942", ""],
+    content: ["Tel: (84) 123.456.789", ""],
   },
   {
     icon: <FaEnvelope />,
     title: "Email Us",
-    content: ["ad.electromart.official@gmail.com", "devsoftware.official@gmail.com"],
+    content: ["contact@muanhanh.com", "devsoftware.official@gmail.com"],
   },
   {
     icon: <FaClock />,

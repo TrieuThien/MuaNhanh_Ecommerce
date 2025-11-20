@@ -71,7 +71,7 @@ const InteractiveMap = () => {
               </div>
               <div className="flex items-center gap-2">
                 <FaPhone className="text-green-500 flex-shrink-0" />
-                <span>(84) 986.126.942</span>
+                <span>(84) 123.456.789</span>
               </div>
               <div className="flex items-center gap-2">
                 <FaClock className="text-blue-500 flex-shrink-0" />

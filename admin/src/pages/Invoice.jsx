@@ -644,19 +644,19 @@ const Invoice = () => {
               {/* Company Header */}
               <div className="flex justify-between items-start mb-8 pb-6 border-b-2 border-black">
                 <div>
-                  <h1 className="text-4xl font-bold text-black mb-2">OREBI</h1>
+                  <h1 className="text-4xl font-bold text-black mb-2">MUANHANH</h1>
                   <div className="text-gray-600 space-y-1">
                     <div className="flex items-center gap-2">
                       <FaMapMarkerAlt className="w-4 h-4" />
-                      <span>123 Business Street, Commerce City, CC 12345</span>
+                      <span>613 Au Co Street, Ho Chi Minh City, HCM 00700</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <FaPhone className="w-4 h-4" />
-                      <span>+1 (555) 123-4567</span>
+                      <span>(+84) 123456789</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <FaEnvelope className="w-4 h-4" />
-                      <span>contact@orebi.com</span>
+                      <span>contact@muanhanh.com</span>
                     </div>
                   </div>
                 </div>
@@ -929,7 +929,7 @@ const Invoice = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-blue-800">
                   <div>
                     <div className="font-semibold mb-2">Bank Transfer:</div>
-                    <div>Bank: Orebi Business Bank</div>
+                    <div>Bank: MuaNhanh Business Bank</div>
                     <div>Account: 123-456-789</div>
                     <div>Routing: 987654321</div>
                   </div>
@@ -950,8 +950,8 @@ const Invoice = () => {
                 </p>
                 <p className="mt-4">
                   Questions? Contact us at{" "}
-                  <span className="text-blue-600">billing@orebi.com</span> or
-                  call <span className="text-blue-600">+1 (555) 123-4567</span>
+                  <span className="text-blue-600">billing@muanhanh.com</span> or
+                  call <span className="text-blue-600">(+84) 123456789</span>
                 </p>
               </div>
             </div>

@@ -177,17 +177,17 @@ const Sidebar = () => {
       badge: null,
     },
     {
+      title: "Invoice", 
+      icon: <FaFileInvoice />,
+      path: "/invoice",
+      description: "Generate & manage invoices",
+    },
+      {
       title: "API Docs",
       icon: <FaBook />,
       path: "/api-docs",
       description: "API documentation",
       badge: "📚",
-    },
-    {
-      title: "Invoice",
-      icon: <FaFileInvoice />,
-      path: "/invoice",
-      description: "Generate & manage invoices",
     },
   ];
 
