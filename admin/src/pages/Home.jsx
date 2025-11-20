@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import axios from "axios";
 import Title from "../components/ui/title";
@@ -276,9 +277,11 @@ const Home = () => {
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-gray-800">Recent Orders</h3>
-            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            <Link
+              to="/orders"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium">
               View All
-            </button>
+            </Link>
           </div>
 
           <div className="space-y-4">

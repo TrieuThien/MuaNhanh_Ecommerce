@@ -107,9 +107,9 @@ const Brands = () => {
       }
 
       const url = editingBrand
-        ? `${import.meta.env.VITE_BACKEND_URL}/brand/${editingBrand._id}`
-        : `${import.meta.env.VITE_BACKEND_URL}/brand`;
-
+        ? `${import.meta.env.VITE_BACKEND_URL}/api/brand/${editingBrand._id}`
+        : `${import.meta.env.VITE_BACKEND_URL}/api/brand`;
+      console.log(url)
       const response = await fetch(url, {
         method: editingBrand ? "PUT" : "POST",
         headers: {

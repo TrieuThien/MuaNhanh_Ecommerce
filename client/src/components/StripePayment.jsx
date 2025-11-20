@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
-  CardElement,
   useStripe,
   useElements,
+  CardNumberElement,
+  CardExpiryElement,
+  CardCvcElement
 } from "@stripe/react-stripe-js";
 import { FaCreditCard, FaLock, FaSpinner } from "react-icons/fa";
 import toast from "react-hot-toast";
@@ -59,7 +61,7 @@ const CheckoutForm = ({ orderId, amount, onSuccess, onCancel }) => {
         clientSecret,
         {
           payment_method: {
-            card: elements.getElement(CardElement),
+            card: elements.getElement(CardNumberElement),
           },
         }
       );
@@ -125,32 +127,63 @@ const CheckoutForm = ({ orderId, amount, onSuccess, onCancel }) => {
               <div className="text-white text-xs font-medium mb-2 opacity-80">
                 CARD NUMBER
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 border border-white/30">
-                <CardElement
-                  options={cardStyle}
-                  onChange={(event) => {
-                    setCardError(event.error ? event.error.message : null);
-                  }}
-                />
-              </div>
-            </div>
+      
+              <div className="space-y-4">
 
-            {/* Card Holder & Expiry */}
-            <div className="relative flex justify-between items-end">
-              <div>
-                <div className="text-white text-xs font-medium mb-1 opacity-80">
-                  CARD HOLDER
+                {/* Card Number */}
+                <div>
+                  <div className="mt-1 p-3 border rounded-lg bg-white">
+                    <CardNumberElement
+                      options={{ style: { base: { fontSize: "16px" } } }}
+                      onChange={(event) => {
+                        if (event.error) {
+                          setCardError(event.error.message);
+                        } else {
+                          setCardError(null);
+                        }
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="text-white text-sm font-semibold tracking-wider">
-                  YOUR NAME
+
+                {/* Row: Expiry + CVC */}
+                <div className="grid grid-cols-2 gap-4">
+
+                  <div>
+                    <label className="text-sm text-gray-700 font-medium">Expiry</label>
+                    <div className="mt-1 p-3 border rounded-lg bg-white">
+                      <CardExpiryElement
+                        options={{ style: { base: { fontSize: "16px" } } }}
+                        onChange={(event) => {
+                          if (event.error) {
+                            setCardError(event.error.message);
+                          } else {
+                            setCardError(null);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm text-gray-700 font-medium">CVC</label>
+                    <div className="mt-1 p-3 border rounded-lg bg-white">
+                      <CardCvcElement
+                        options={{ style: { base: { fontSize: "16px" } } }}
+                        onChange={(event) => {
+                          if (event.error) {
+                            setCardError(event.error.message);
+                          } else {
+                            setCardError(null);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+
                 </div>
               </div>
-              <div className="text-right">
-                <div className="text-white text-xs font-medium mb-1 opacity-80">
-                  VALID THRU
-                </div>
-                <div className="text-white text-sm font-semibold">MM/YY</div>
-              </div>
+
             </div>
 
             {/* Card Brand Logo Area */}
@@ -220,11 +253,6 @@ const CheckoutForm = ({ orderId, amount, onSuccess, onCancel }) => {
           <img
             src="https://js.stripe.com/v3/fingerprinted/img/mastercard-4d8844094130711885b5e41b28c9848f.svg"
             alt="Mastercard"
-            className="h-6"
-          />
-          <img
-            src="https://js.stripe.com/v3/fingerprinted/img/amex-a49b82f46c5cd31dc8da3317e7849b70.svg"
-            alt="American Express"
             className="h-6"
           />
         </div>

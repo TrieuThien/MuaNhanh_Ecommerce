@@ -17,6 +17,7 @@ const cleanupTempFile = (filePath) => {
 // Create brand
 const createBrand = async (req, res) => {
   try {
+    console.log("Function was called!!!")
     const { name, description, website } = req.body;
 
     // Check if brand already exists
@@ -32,12 +33,12 @@ const createBrand = async (req, res) => {
     }
 
     let imageUrl = "";
-
+    console.log(req.file.path)
     // Upload image to cloudinary if provided
     if (req.file) {
       try {
         const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-          folder: "orebi/brands",
+          folder: "muanhanh/brands",
           resource_type: "image",
           transformation: [
             { width: 400, height: 400, crop: "fill" },
@@ -45,19 +46,19 @@ const createBrand = async (req, res) => {
           ],
         });
         imageUrl = uploadResult.secure_url;
-
-        // Clean up temporary file
-        cleanupTempFile(req.file.path);
+        
       } catch (uploadError) {
         // Clean up temporary file on error
         if (req.file?.path) {
           cleanupTempFile(req.file.path);
         }
-
         return res.status(400).json({
           success: false,
           message: "Failed to upload image",
         });
+      } finally {
+        // Clean up temporary file
+        cleanupTempFile(req.file.path);
       }
     } else {
       return res.status(400).json({
