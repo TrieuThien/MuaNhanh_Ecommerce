@@ -8,7 +8,6 @@ const adminAuth = async (req, res, next) => {
       authHeader && authHeader.startsWith("Bearer ")
         ? authHeader.slice(7)
         : req.headers.token;
-
     if (!token) {
       return res.json({ success: false, message: "Not Authorized, try again" });
     }

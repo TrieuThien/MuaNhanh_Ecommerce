@@ -28,7 +28,6 @@ const allowedOrigins = [
 // CORS configuration using config system
 console.log("Allowed CORS Origins:", allowedOrigins);
 console.log("NODE_ENV:", process.env.NODE_ENV);
-
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -53,7 +52,7 @@ app.use(
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "token"],
   })
 );
 app.use(express.json());
