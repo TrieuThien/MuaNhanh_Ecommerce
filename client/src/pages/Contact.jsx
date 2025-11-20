@@ -25,17 +25,17 @@ const contactInfo = [
   {
     icon: <FaMapMarkerAlt />,
     title: "Visit Our Store",
-    content: ["3065 Broadway Street", "New York, NY 10027", "United States"],
+    content: ["613 Au Co Street", "Hồ Chí Minh, HCM 00700", "Vietnam"],
   },
   {
     icon: <FaPhone />,
     title: "Call Us",
-    content: ["Tel: (415) 225-0123", "Toll Free: 1-800-OREBI-US"],
+    content: ["Tel: (84) 986.126.942", ""],
   },
   {
     icon: <FaEnvelope />,
     title: "Email Us",
-    content: ["support@orebi.com", "sales@orebi.com"],
+    content: ["ad.electromart.official@gmail.com", "devsoftware.official@gmail.com"],
   },
   {
     icon: <FaClock />,
@@ -406,7 +406,7 @@ const Contact = () => {
                 <div className="space-y-4">
                   <p className="text-gray-700 leading-relaxed">
                     Experience our products in person at our beautiful flagship
-                    store in the heart of New York. Our knowledgeable staff is
+                    store in the heart of Ho Chi Minh. Our knowledgeable staff is
                     ready to help you find exactly what you&apos;re looking for.
                   </p>
                   <div className="space-y-2">

@@ -4,9 +4,9 @@ const router = express.Router();
 
 // API Documentation data
 const apiDocumentation = {
-  title: "Orebi E-commerce API Documentation",
+  title: "MuaNhanh E-commerce API Documentation",
   version: "1.0.0",
-  description: "Complete API documentation for the Orebi e-commerce platform",
+  description: "Complete API documentation for the MuaNhanh e-commerce platform",
   baseUrl:
     process.env.NODE_ENV === "production"
       ? "https://your-domain.com"
@@ -576,7 +576,7 @@ router.get("/api/docs/html", (req, res) => {
 
         <div class="section">
             <h2>🚀 Quick Start</h2>
-            <p>Welcome to the Orebi E-commerce API! This RESTful API provides comprehensive functionality for managing users, products, and orders.</p>
+            <p>Welcome to the MuaNhanh E-commerce API! This RESTful API provides comprehensive functionality for managing users, products, and orders.</p>
             
             <h3>Authentication</h3>
             <p>Most endpoints require authentication. Include your JWT token in the <code>token</code> header:</p>
@@ -685,7 +685,7 @@ router.get("/api/docs/html", (req, res) => {
         </div>
 
         <footer style="text-align: center; margin-top: 3rem; padding: 2rem; color: #64748b;">
-            <p>© 2025 Orebi E-commerce API Documentation</p>
+            <p>© 2025 MuaNhanh E-commerce API Documentation</p>
         </footer>
     </body>
     </html>

@@ -277,7 +277,7 @@ const Sidebar = () => {
           </div>
           <div className="hidden sm:block">
             <h1 className="font-bold text-lg sm:text-xl text-gray-900">
-              Orebi Admin
+              MuaNhanh Admin
             </h1>
             <p className="text-xs text-gray-500 flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -382,7 +382,7 @@ const Sidebar = () => {
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
               <span>System Healthy</span>
             </div>
-            <p className="text-gray-500">© 2025 Orebi Admin v1.0.0</p>
+            <p className="text-gray-500">© 2025 MuaNhanh Admin v1.0.0</p>
           </div>
           <div className="sm:hidden flex flex-col items-center gap-1">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>

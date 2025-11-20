@@ -18,7 +18,7 @@ const createInitialAdmin = async () => {
     }
 
     // Create admin user
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@orebi.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@muanhanh.com";
     const adminPassword = process.env.ADMIN_PASSWORD || "admin123456";
     const adminName = process.env.ADMIN_NAME || "Admin User";
 

@@ -54,7 +54,7 @@ const ApiDocumentation = () => {
               API Documentation
             </h1>
             <p className="text-gray-600 mb-6">
-              Complete documentation for the Orebi E-commerce API
+              Complete documentation for the MuaNhanh E-commerce API
             </p>
           </div>
         </div>

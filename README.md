@@ -68,7 +68,7 @@ After purchasing and downloading the code:
 ```bash
 # Extract the downloaded ZIP file
 # Navigate to the project directory
-cd orebishopping-vitejs
+cd MuaNhanh_Ecommerce
 
 # Install dependencies for all components
 # For Server

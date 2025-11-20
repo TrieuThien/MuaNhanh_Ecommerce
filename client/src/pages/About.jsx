@@ -45,7 +45,7 @@ const About = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About Orebi Shopping
+              About MuaNhanh Shopping
             </h1>
             <p className="text-xl text-gray-300 leading-relaxed">
               We&apos;re passionate about bringing you the best shopping
@@ -96,7 +96,7 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  Founded in 2019, Orebi Shopping began with a simple mission:
+                  Founded in 2019, MuaNhanh Shopping began with a simple mission:
                   to make quality products accessible to everyone, everywhere.
                   What started as a small online store has grown into a trusted
                   marketplace serving customers across the globe.
@@ -190,7 +190,7 @@ const About = () => {
               Ready to Start Shopping?
             </h2>
             <p className="text-gray-300 text-lg mb-8">
-              Join thousands of satisfied customers and discover why Orebi
+              Join thousands of satisfied customers and discover why MuaNhanh
               Shopping is the preferred choice for online shopping.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -5,9 +5,9 @@ import { FaMapMarkerAlt, FaDirections, FaPhone, FaClock } from "react-icons/fa";
 const InteractiveMap = () => {
   const [showDirections, setShowDirections] = useState(false);
 
-  // Coordinates for Broadway Street, New York
-  const position = [40.8176, -73.9482];
-  const address = "3065 Broadway Street, New York, NY 10027, United States";
+  // Coordinates for 613 Au Co Street, Tan Phu ward, Ho Chi Minh
+  const position = [10.784612, 106.641802];
+  const address = "613 Au Co Street, Tan Phu ward, Ho Chi Minh, HCM 00700, Vietnam";
 
   const openInGoogleMaps = () => {
     const url = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
@@ -39,7 +39,7 @@ const InteractiveMap = () => {
             <FaMapMarkerAlt className="text-4xl text-red-600 drop-shadow-lg" />
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-2 min-w-max">
               <p className="text-sm font-semibold text-gray-900 whitespace-nowrap">
-                Orebi Shopping
+                MuaNhanh Shopping
               </p>
             </div>
           </div>
@@ -62,7 +62,7 @@ const InteractiveMap = () => {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-bold text-gray-900 text-lg mb-2">
-              Orebi Shopping
+              MuaNhanh Shopping
             </h3>
             <div className="space-y-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ const InteractiveMap = () => {
               </div>
               <div className="flex items-center gap-2">
                 <FaPhone className="text-green-500 flex-shrink-0" />
-                <span>(415) 225-0123</span>
+                <span>(84) 986.126.942</span>
               </div>
               <div className="flex items-center gap-2">
                 <FaClock className="text-blue-500 flex-shrink-0" />
