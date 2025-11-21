@@ -17,6 +17,7 @@ import Invoice from "./pages/Invoice";
 import Categories from "./pages/Categories";
 import Brands from "./pages/Brands";
 import Contacts from "./pages/Contacts";
+import Settings from "./pages/Settings";
 
 function App() {
   const { token } = useSelector((state) => state.auth);
@@ -56,6 +57,7 @@ function App() {
                       <Route path="/users" element={<Users token={token} />} />
                       <Route path="/contacts" element={<Contacts />} />
                       <Route path="/invoice" element={<Invoice />} />
+                      <Route path="/settings" element={<Settings />} />
                     </Routes>
                   </div>
                 </div>

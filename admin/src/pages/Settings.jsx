@@ -1,4 +1,4 @@
-import { FaCog, FaUser, FaDatabase, FaShield, FaBell } from "react-icons/fa";
+import { FaCog, FaUser, FaDatabase, FaUserShield, FaBell } from "react-icons/fa";
 import { MdSecurity, MdNotifications } from "react-icons/md";
 
 const Settings = () => {
@@ -8,7 +8,7 @@ const Settings = () => {
       icon: <FaCog />,
       color: "blue",
       settings: [
-        { label: "Site Name", value: "Orebi Shopping", type: "text" },
+        { label: "Site Name", value: "MuaNhanh Shopping", type: "text" },
         {
           label: "Site Description",
           value: "Modern e-commerce platform",
@@ -31,7 +31,7 @@ const Settings = () => {
     },
     {
       title: "Security",
-      icon: <FaShield />,
+      icon: <FaUserShield />,
       color: "red",
       settings: [
         { label: "Two-Factor Authentication", value: false, type: "toggle" },

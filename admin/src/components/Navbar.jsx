@@ -42,14 +42,15 @@ const Navbar = () => {
       .slice(0, 2);
   };
 
+  // Mock data
   const notifications = [
-    { id: 1, title: "New order received", time: "2 min ago", type: "order" },
-    { id: 2, title: "Low stock alert", time: "1 hour ago", type: "warning" },
-    { id: 3, title: "User registration", time: "3 hours ago", type: "user" },
+    // { id: 1, title: "New order received", time: "2 min ago", type: "order" },
+    // { id: 2, title: "Low stock alert", time: "1 hour ago", type: "warning" },
+    // { id: 3, title: "User registration", time: "3 hours ago", type: "user" },
   ];
 
   const userMenuItems = [
-    { icon: FaUser, label: "Profile", path: "/profile" },
+    { icon: FaUser, label: "Profile", path: "/users" },
     { icon: MdDashboard, label: "Dashboard", path: "/" },
     { icon: FaCog, label: "Settings", path: "/settings" },
   ];
