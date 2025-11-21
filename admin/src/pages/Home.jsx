@@ -334,9 +334,11 @@ const Home = () => {
             <h3 className="text-xl font-bold text-gray-800">
               Popular Products
             </h3>
-            <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+            <Link
+              to="/list"
+            className="text-blue-600 hover:text-blue-800 text-sm font-medium">
               View All
-            </button>
+            </Link>
           </div>
 
           <div className="space-y-4">

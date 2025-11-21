@@ -5,7 +5,8 @@ const checkConfig = (server) => {
   switch (server) {
     case "production":
       config = {
-        baseUrl: "https://orebiserver.reactbd.com",
+        // Thay đổi khi vào môi trường production
+        // baseUrl: "https://orebiserver.reactbd.com", 
       };
       break;
     case "local":
@@ -19,5 +20,5 @@ const checkConfig = (server) => {
   return config;
 };
 
-export const selectServer = "production";
+export const selectServer = "local";
 export const config = checkConfig(selectServer);

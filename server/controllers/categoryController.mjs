@@ -17,7 +17,6 @@ const cleanupTempFile = (filePath) => {
 // Create category
 const createCategory = async (req, res) => {
   try {
-    console.log("Function was called")
     const { name, description } = req.body;
 
     // Check if category already exists
