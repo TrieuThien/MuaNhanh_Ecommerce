@@ -17,6 +17,7 @@ const cleanupTempFile = (filePath) => {
 // Create category
 const createCategory = async (req, res) => {
   try {
+    console.log("Function was called")
     const { name, description } = req.body;
 
     // Check if category already exists
@@ -37,7 +38,7 @@ const createCategory = async (req, res) => {
     if (req.file) {
       try {
         const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-          folder: "orebi/categories",
+          folder: "muanhanh/categories",
           resource_type: "image",
           transformation: [
             { width: 400, height: 400, crop: "fill" },
@@ -185,7 +186,7 @@ const updateCategory = async (req, res) => {
 
         // Upload new image
         const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-          folder: "orebi/categories",
+          folder: "muanhanh/categories",
           resource_type: "image",
           transformation: [
             { width: 400, height: 400, crop: "fill" },
