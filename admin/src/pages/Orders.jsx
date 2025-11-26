@@ -19,6 +19,7 @@ import {
   FaTimes,
   FaSort,
   FaSync,
+  FaEye,
 } from "react-icons/fa";
 
 const Orders = () => {
@@ -33,6 +34,8 @@ const Orders = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [newStatus, setNewStatus] = useState("");
   const [newPaymentStatus, setNewPaymentStatus] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   const statusOptions = [
     "pending",
@@ -254,6 +257,11 @@ const Orders = () => {
       </div>
     );
   }
+
+  const handleViewOrder = (order) => {
+    setSelectedOrder(order);
+    setShowDetailModal(true);
+  };
 
   return (
     <div>
@@ -500,6 +508,13 @@ const Orders = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex items-center justify-end space-x-2">
                       <button
+                        onClick={() => handleViewOrder(order)}
+                        className="text-indigo-600 hover:text-indigo-900 p-1 rounded mr-2"
+                        title="View Detail"
+                      >
+                        <FaEye className="w-4 h-4" />
+                      </button>
+                      <button
                         onClick={() => handleEditOrder(order)}
                         className="text-blue-600 hover:text-blue-900 p-1 rounded"
                         title="Edit Order"
@@ -572,6 +587,13 @@ const Orders = () => {
                   </div>
                 </div>
                 <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleViewOrder(order)}
+                    className="text-indigo-600 hover:text-indigo-900 p-2 rounded-lg hover:bg-indigo-50"
+                    title="View Detail"
+                  >
+                    <FaEye className="w-4 h-4" />
+                  </button>
                   <button
                     onClick={() => handleEditOrder(order)}
                     className="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50"
@@ -655,6 +677,124 @@ const Orders = () => {
           ))
         )}
       </div>
+
+      {/* Detail Modal */}
+      {showDetailModal && selectedOrder && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-screen overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Order Detail #{selectedOrder._id.slice(-8).toUpperCase()}
+              </h2>
+              <button
+                onClick={() => setShowDetailModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <FaTimes className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-6">
+              {/* Customer Info */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Customer</h3>
+                  <div className="space-y-2 text-sm">
+                    <p><span className="font-medium">Name:</span> {selectedOrder.userId?.name || "N/A"}</p>
+                    <p><span className="font-medium">Email:</span> {selectedOrder.userId?.email || "N/A"}</p>
+                    <p><span className="font-medium">Phone:</span> {selectedOrder.address?.phone || "N/A"}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="font-semibold text-gray-900 mb-3">Shipping Address</h3>
+                  <p className="text-sm text-gray-700">
+                    {selectedOrder.address?.firstName} {selectedOrder.address?.lastName}<br />
+                    {selectedOrder.address?.street}, {selectedOrder.address?.city}<br />
+                    {selectedOrder.address?.state}, {selectedOrder.address?.zipcode}<br />
+                    {selectedOrder.address?.country}
+                  </p>
+                </div>
+              </div>
+
+              {/* Order Summary */}
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-600">Order Date</p>
+                    <p className="font-medium">{new Date(selectedOrder.date).toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Payment Method</p>
+                    <p className="font-medium uppercase">{selectedOrder.paymentMethod}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Order Status</p>
+                    <p className="font-medium capitalize">{selectedOrder.status}</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-600">Payment Status</p>
+                    <p className="font-medium capitalize">{selectedOrder.paymentStatus}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Product List */}
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-4">Products ({selectedOrder.items.length})</h3>
+                <div className="space-y-3">
+                  {selectedOrder.items.map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-4 bg-gray-50 rounded-lg p-4">
+                      {item.image ? (
+                        <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded" />
+                      ) : (
+                        <div className="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                          <FaBox className="w-8 h-8 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <p className="font-medium text-gray-900">{item.name}</p>
+                        <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                      </div>
+                      <p className="font-semibold text-gray-900">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Total */}
+              <div className="border-t-2 border-gray-200 pt-4">
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Total Amount</span>
+                  <span className="text-xl text-blue-600">
+                    ${selectedOrder.amount.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  onClick={() => {
+                    handleEditOrder(selectedOrder);
+                    setShowDetailModal(false);
+                  }}
+                  className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Edit Status
+                </button>
+                <button
+                  onClick={() => setShowDetailModal(false)}
+                  className="px-5 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Modal */}
       {showEditModal && editingOrder && (
