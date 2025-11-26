@@ -1,4 +1,4 @@
-import logo from "./orebiLogo.png";
+import logo from "./muanhanhLogo.png";
 import logoLight from "./logoLight.png";
 
 export { logo, logoLight };

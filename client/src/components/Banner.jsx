@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
 import {
   bannerImgOne,
-  bannerImgThree,
   bannerImgTwo,
+  bannerImgThree,
 } from "../assets/images/index";
 import "slick-carousel/slick/slick.css";
 import Container from "./Container";
@@ -14,36 +14,36 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 
 const bannerData = [
   {
-    title: "Premium Collection",
-    subtitle: "Top selling smartphone and accessories",
-    description:
-      "Discover the latest in mobile technology with exclusive discounts",
-    discount: "Up to 40% off",
-    from: 599.99,
-    sale: "Limited Time",
-    image: bannerImgOne,
-    buttonText: "Shop Collection",
+    title: "Organic Fruits & Veggies",
+    subtitle: "Fresh deals on produce",
+    description: "Handpicked fresh produce delivered to your doorstep",
+    discount: "Free delivery over $50",
+    from: 9.99,
+    sale: "Limited Time Offer",
+    image: bannerImgOne, // đặt tên biến ảnh tương ứng
+    buttonText: "Shop Fresh"
   },
   {
-    title: "Household Chairs",
-    subtitle: "The best deals on Chairs",
-    description: "Professional-grade chairs for creatives and professionals",
-    discount: "$250 off",
-    from: 2349.99,
+    title: "Kitchen Essentials",
+    subtitle: "Hot deals on kitchenware",
+    description: "Upgrade your kitchen with our premium selection",
+    discount: "Up to 30% off",
+    from: 29.99,
     sale: "Special Offer",
-    image: bannerImgTwo,
-    buttonText: "Explore Home Decor",
+    image: bannerImgTwo, // đặt tên biến ảnh tương ứng
+    buttonText: "Shop Kitchen"
   },
   {
-    title: "Lighting Excellence",
-    subtitle: "Premium lighting collection",
-    description: "Experience crystal-clear light with our curated selection",
-    discount: "Free shipping",
-    from: 199.99,
-    sale: "Weekend Deal",
-    image: bannerImgThree,
-    buttonText: "Shop Lights",
-  },
+    title: "Refreshing Beverages",
+    subtitle: "Weekend specials on drinks",
+    description: "Cool drinks for your weekend relaxation",
+    discount: "Buy 2 Get 1 Free",
+    from: 2.49,
+    sale: "Limited Offer",
+    image: bannerImgThree, // đặt tên biến ảnh tương ứng
+    buttonText: "Shop Drinks"
+  }
+
 ];
 
 const Banner = () => {
@@ -71,11 +71,10 @@ const Banner = () => {
     ),
     customPaging: (i) => (
       <div
-        className={`cursor-pointer transition-all duration-300 ${
-          i === dotActive
+        className={`cursor-pointer transition-all duration-300 ${i === dotActive
             ? "w-8 h-2 bg-gray-800 rounded-full"
             : "w-2 h-2 bg-gray-600/50 rounded-full hover:bg-gray-600/75"
-        }`}
+          }`}
       />
     ),
     responsive: [
@@ -90,11 +89,10 @@ const Banner = () => {
           ),
           customPaging: (i) => (
             <div
-              className={`cursor-pointer transition-all duration-300 ${
-                i === dotActive
+              className={`cursor-pointer transition-all duration-300 ${i === dotActive
                   ? "w-6 h-1.5 bg-gray-800 rounded-full"
                   : "w-1.5 h-1.5 bg-gray-600/50 rounded-full hover:bg-gray-600/75"
-              }`}
+                }`}
             />
           ),
         },
@@ -150,7 +148,7 @@ const Banner = () => {
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.7, delay: 0.3 }}
-                      className="text-3xl sm:text-4xl md:text-6xl font-black leading-tight lg:leading-none bg-gradient-to-r from-gray-800 via-gray-900 to-black bg-clip-text text-transparent py-2"
+                      className="text-1xl sm:text-3xl md:text-5xl font-black leading-tight lg:leading-none bg-gradient-to-r from-gray-800 via-gray-900 to-black bg-clip-text text-transparent py-2"
                     >
                       {item?.title}
                     </motion.h1>
@@ -183,7 +181,7 @@ const Banner = () => {
                       className="flex flex-col sm:flex-row sm:items-center justify-center lg:justify-start gap-4 lg:gap-6 py-2 lg:py-4"
                     >
                       <div className="flex items-center justify-center lg:justify-start">
-                        <div className="text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text">
+                        <div className="text-1xl sm:text-2xl md:text-3xl font-black text-transparent bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text">
                           {item?.discount}
                         </div>
                       </div>
@@ -193,7 +191,7 @@ const Banner = () => {
                         </span>
                         <PriceFormat
                           amount={item?.from}
-                          className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800"
+                          className="text-1xl sm:text-2xl md:text-3xl font-bold text-gray-800"
                         />
                       </div>
                     </motion.div>
@@ -264,9 +262,8 @@ const Banner = () => {
 
       {/* Navigation Arrows */}
       <div
-        className={`absolute inset-y-0 left-0 flex items-center z-20 transition-opacity duration-300 ${
-          isHovered ? "opacity-100" : "opacity-0"
-        }`}
+        className={`absolute inset-y-0 left-0 flex items-center z-20 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
+          }`}
       >
         <button
           onClick={() => sliderRef.current?.slickPrev()}
@@ -278,9 +275,8 @@ const Banner = () => {
       </div>
 
       <div
-        className={`absolute inset-y-0 right-0 flex items-center z-20 transition-opacity duration-300 ${
-          isHovered ? "opacity-100" : "opacity-0"
-        }`}
+        className={`absolute inset-y-0 right-0 flex items-center z-20 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
+          }`}
       >
         <button
           onClick={() => sliderRef.current?.slickNext()}
