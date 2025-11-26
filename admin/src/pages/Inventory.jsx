@@ -1,29 +1,109 @@
+import { use } from "react";
 import { FaBoxes, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 import { MdOutlineInventory, MdLowPriority } from "react-icons/md";
+import axios from "axios"
+import { useSelector } from "react-redux";
+import { useState, useEffect, useCallback } from "react";
+import { serverUrl } from "../../config";
 
 const Inventory = () => {
+  const { token } = useSelector((state) => state.auth);
+  const [stats, setStats] = useState({
+    totalProducts: 0,
+    lowStock: 0,
+    outOfStock: 0,
+    inStock: 0,
+    loading: true,
+    error: null,
+  })
+
+  // const [lowStockItems, setLowStockItems] = useState({
+  //   name: "",
+  //   stock: 0,
+  //   threshold: 0,
+  // })
+
+  const fetchStatistics = useCallback(async () => {
+    try {
+      setStats((prev) => ({ ...prev, loading: true, error: null }));
+
+      // Fetch data from server
+      const responseStats = await axios.get(`${serverUrl}/api/product/inventory-stats`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (responseStats.data.success) {
+        const { inventoryStats } = responseStats.data;
+
+        setStats({
+          totalProducts: inventoryStats.totalProducts || 0,
+          lowStock: inventoryStats.lowStockItems || 0,
+          outOfStock: inventoryStats.outOfStock || 0,
+          inStock: inventoryStats.inStock || 0,
+          loading: false
+        });
+      }
+      else {
+        throw new Error(responseStats.data.message || "Failed to fetch stats")
+      }
+      
+      // const responseLowStockItems = await axios.get(`${serverUrl}/api/product/low-stock`, {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // })
+      // if (responseStats.data.success) {
+      //   const { inventoryStats } = responseStats.data;
+
+      //   setStats({
+      //     totalProducts: inventoryStats.totalProducts || 0,
+      //     lowStock: inventoryStats.lowStockItems || 0,
+      //     outOfStock: inventoryStats.outOfStock || 0,
+      //     inStock: inventoryStats.inStock || 0,
+      //     loading: false
+      //   });
+      // }
+      // else {
+      //   throw new Error(responseStats.data.message || "Failed to fetch stats")
+      // }
+    }
+    catch (error) {
+      console.log("Error fetching statstics: ", error);
+      setStats((prev) => ({
+        ...prev,
+        loading: false,
+        error: error.message || "Failed to load inventory data",
+      }))
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchStatistics();
+  }, [token, fetchStatistics]);
+
   const inventoryStats = [
     {
       title: "Total Products",
-      value: "156",
+      value: stats.totalProducts,
       icon: <FaBoxes />,
       color: "blue",
     },
     {
       title: "Low Stock Items",
-      value: "12",
+      value: stats.lowStock,
       icon: <FaExclamationTriangle />,
       color: "yellow",
     },
     {
       title: "Out of Stock",
-      value: "3",
+      value: stats.outOfStock,
       icon: <MdLowPriority />,
       color: "red",
     },
     {
       title: "In Stock",
-      value: "141",
+      value: stats.inStock,
       icon: <FaCheckCircle />,
       color: "green",
     },

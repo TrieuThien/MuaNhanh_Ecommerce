@@ -6,6 +6,8 @@ import {
   singleProducts,
   updateStock,
   updateProduct,
+  productInventoryStats,
+  lowStockProducts,
 } from "../controllers/productController.mjs";
 import upload from "../middleware/multer.mjs";
 import adminAuth from "../middleware/adminAuth.js";
@@ -41,6 +43,8 @@ router.put(
 router.post(`${routeValue}update-stock`, updateStock);
 router.get(`${routeValue}single`, singleProducts);
 router.get(`${routeValue}list`, listProducts);
+router.get(`${routeValue}inventory-stats`, adminAuth, productInventoryStats);
+router.get(`${routeValue}low-stock`, adminAuth, lowStockProducts);
 
 // Public routes for frontend
 router.get("/api/products", listProducts);

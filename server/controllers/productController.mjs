@@ -24,6 +24,7 @@ const addProduct = async (req, res) => {
       price,
       discountedPercentage,
       stock,
+      threshold,
       category,
       brand,
       badge,
@@ -91,6 +92,7 @@ const addProduct = async (req, res) => {
         ? Number(discountedPercentage)
         : 10,
       stock: stock ? Number(stock) : 0,
+      threshold: threshold ? Number(threshold) : 0,
       soldQuantity: 0,
       category,
       brand: brand ? brand : "",
@@ -374,6 +376,7 @@ const updateProduct = async (req, res) => {
       price,
       discountedPercentage,
       stock,
+      threshold,
       category,
       brand,
       badge,
@@ -468,6 +471,7 @@ const updateProduct = async (req, res) => {
         ? Number(discountedPercentage)
         : 10,
       stock: stock ? Number(stock) : 0,
+      threshold: threshold ? Number(threshold) : 0,
       category,
       brand: brand || "",
       badge: badge === "true" ? true : false,
@@ -495,6 +499,69 @@ const updateProduct = async (req, res) => {
   }
 };
 
+// ===============================
+// Product Inventory Statistics
+// ===============================
+const productInventoryStats = async (req, res) => {
+  try {
+    const totalProducts = await productModel.countDocuments();
+
+    // Low stock: ví dụ < 10 (hoặc nhận threshold từ query)
+    const lowStockThreshold = Number(req.query.lowStock || 10);
+
+    const lowStockItems = await productModel.countDocuments({
+      stock: { $gt: 0, $lte: lowStockThreshold },
+    });
+
+    const outOfStock = await productModel.countDocuments({ stock: 0 });
+
+    const inStock = await productModel.countDocuments({ stock: { $gt: 0 } });
+    
+    return res.json({
+      success: true,
+      inventoryStats: {
+        totalProducts,
+        lowStockItems,
+        outOfStock,
+        inStock,
+      },
+    });
+  } catch (error) {
+    console.log("Product Stats Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// ===============================
+// Low Stock Product List (dynamic threshold per product)
+// ===============================
+const lowStockProducts = async (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 10;
+
+    // Lấy các sản phẩm có stock > 0 và stock <= threshold
+    const products = await productModel
+      .find({
+        stock: { $gt: 0 },
+        $expr: { $lte: ["$stock", "$threshold"] }, // MongoDB expression để so sánh stock với threshold của sản phẩm
+      })
+      .sort({ stock: 1 }) // ít hàng lên trước
+      .limit(limit);
+
+    return res.json({
+      success: true,
+      products,
+      limit,
+      count: products.length,
+    });
+  } catch (error) {
+    console.log("Low Stock Products Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+
+
 export {
   addProduct,
   listProducts,
@@ -502,4 +569,6 @@ export {
   singleProducts,
   updateStock,
   updateProduct,
+  productInventoryStats,
+  lowStockProducts
 };

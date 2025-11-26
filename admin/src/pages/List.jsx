@@ -123,7 +123,8 @@ const List = ({ token }) => {
     } else if (
       name === "price" ||
       name === "discountedPercentage" ||
-      name === "stock"
+      name === "stock" ||
+      name === "threshold"
     ) {
       setFormData({
         ...formData,
@@ -167,6 +168,7 @@ const List = ({ token }) => {
       price: product.price || "",
       discountedPercentage: product.discountedPercentage || 10,
       stock: product.stock || 0,
+      threshold: product.threshold || 0,
       category: product.category || "",
       offer: product.offer || false,
       isAvailable: product.isAvailable !== false,
@@ -194,6 +196,7 @@ const List = ({ token }) => {
       price: "",
       discountedPercentage: 10,
       stock: "",
+      threshold: "",
       category: "",
       offer: false,
       isAvailable: true,
@@ -246,6 +249,7 @@ const List = ({ token }) => {
       data.append("price", formData.price);
       data.append("discountedPercentage", formData.discountedPercentage);
       data.append("stock", formData.stock);
+      data.append("threshold", formData.threshold);
       data.append("category", formData.category);
       data.append("offer", formData.offer);
       data.append("isAvailable", formData.isAvailable);
@@ -800,7 +804,7 @@ const List = ({ token }) => {
                 </div>
 
                 {/* Pricing & Stock */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
                   <div className="flex flex-col">
                     <Label htmlFor="price">Price *</Label>
                     <Input
@@ -835,6 +839,19 @@ const List = ({ token }) => {
                       min="0"
                       name="stock"
                       value={formData.stock}
+                      onChange={handleInputChange}
+                      className="mt-1"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex flex-col">
+                    <Label htmlFor="threshold">Threshold</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      name="threshold"
+                      value={formData.threshold}
                       onChange={handleInputChange}
                       className="mt-1"
                       required

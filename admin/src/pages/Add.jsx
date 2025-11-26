@@ -86,7 +86,8 @@ const Add = ({ token }) => {
     } else if (
       name === "price" ||
       name === "discountedPercentage" ||
-      name === "stock"
+      name === "stock" ||
+      name === "threshold"
     ) {
       setFormData({
         ...formData,
@@ -153,6 +154,7 @@ const Add = ({ token }) => {
       data.append("price", formData.price);
       data.append("discountedPercentage", formData.discountedPercentage);
       data.append("stock", formData.stock);
+      data.append("threshold", formData.threshold);
       data.append("category", formData.category);
       data.append("offer", formData.offer);
       data.append("isAvailable", formData.isAvailable);
@@ -343,7 +345,7 @@ const Add = ({ token }) => {
               <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Pricing & Stock
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 sm:gap-6">
                 <div className="flex flex-col">
                   <Label htmlFor="price">Price *</Label>
                   <Input
@@ -383,6 +385,20 @@ const Add = ({ token }) => {
                     placeholder="0"
                     name="stock"
                     value={formData.stock}
+                    onChange={handleChange}
+                    className="mt-1"
+                    required
+                  />
+                </div>
+                
+                <div className="flex flex-col">
+                  <Label htmlFor="threshold">Threshold</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    name="threshold"
+                    value={formData.threshold}
                     onChange={handleChange}
                     className="mt-1"
                     required

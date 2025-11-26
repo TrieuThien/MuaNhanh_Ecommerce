@@ -16,6 +16,7 @@ const productSchema = new mongoose.Schema(
     offer: { type: Boolean },
     description: { type: String, required: true },
     tags: { type: Array },
+    threshold: { type: Number },
   },
   {
     timestamps: true,
