@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema(
         ref: "order",
       },
     ],
+    wishlist: {
+      type: Object,
+      default: {},
+    },
     addresses: [
       {
         label: { type: String, required: true }, // e.g., 'Home', 'Work', 'Billing'

@@ -9,10 +9,10 @@ const createOrder = async (req, res) => {
     const userId = req.user?.id;
 
     // Debug: Log the received data
-    console.log("Order Creation Debug:");
-    console.log("Items:", JSON.stringify(items, null, 2));
-    console.log("Address:", JSON.stringify(address, null, 2));
-    console.log("Amount:", amount);
+    // console.log("Order Creation Debug:");
+    // console.log("Items:", JSON.stringify(items, null, 2));
+    // console.log("Address:", JSON.stringify(address, null, 2));
+    // console.log("Amount:", amount);
 
     // Validate authentication
     if (!userId) {

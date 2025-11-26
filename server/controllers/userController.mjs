@@ -2,6 +2,7 @@ import validator from "validator";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
+import productModel from "../models/productModel.js";
 import { cloudinary, deleteCloudinaryImage } from "../config/cloudinary.js";
 import fs from "fs";
 
@@ -579,27 +580,6 @@ const uploadUserAvatar = async (req, res) => {
   }
 };
 
-export {
-  userLogin,
-  userRegister,
-  adminLogin,
-  getUsers,
-  removeUser,
-  updateUser,
-  getUserProfile,
-  updateUserProfile,
-  addToCart,
-  updateCart,
-  getUserCart,
-  clearCart,
-  createAdmin,
-  addAddress,
-  updateAddress,
-  deleteAddress,
-  setDefaultAddress,
-  getUserAddresses,
-  uploadUserAvatar,
-};
 
 // Get user profile
 const getUserProfile = async (req, res) => {
@@ -820,6 +800,71 @@ const clearCart = async (req, res) => {
   }
 };
 
+// Add to wishlist
+const addToWishlist = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" })
+    }
+  
+    const product = await productModel.findById(req.body.productId);
+    if (!product) {
+      return res.json({ success: false, message: "Product not found" })
+    }
+
+    const { productId } = req.body;
+    const productKey = String(productId);
+    if (Object.prototype.hasOwnProperty.call(user.wishlist, productKey)) {
+      return res.json({
+        success: false,
+        message: "Product already in wishlist"
+      });
+    }
+    user.wishlist[productKey] = true;
+    user.markModified('wishlist');
+    await user.save();
+    res.json({ success: true, message: "Product added to wishlist" })
+  }
+  catch (error) {
+    console.log("Add to Wishlist Error", error);
+    res.json({ success: false, message: error.message })
+  }
+}
+
+// Remove from wishlist
+const removeFromWishlist = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" })
+    }
+    const { productId } = req.body;
+    delete user.wishlist[productId];
+    await user.save();
+    res.json({ success: true, message: "Product removed from wishlist" })
+  }
+  catch (error) {
+    console.log("Remove from Wishlist Error", error);
+    res.json({ success: false, message: error.message })
+  }
+}
+
+// Get user wishlist
+const getUserWishlist = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user.id);
+    if (!user) {
+      return res.json({ success: false, message: "User not found" })
+    }
+    res.json({ success: true, wishlist: Object.keys(user.wishlist) })
+  }
+  catch (error) {
+    console.log("Get Wishlist Error", error);
+    res.json({ success: false, message: error.message })
+  }
+};
+
 // Create admin user (only accessible by existing admins)
 const createAdmin = async (req, res) => {
   try {
@@ -875,4 +920,30 @@ const createAdmin = async (req, res) => {
     console.log("Create Admin Error", error);
     res.json({ success: false, message: error.message });
   }
+};
+
+
+export {
+  userLogin,
+  userRegister,
+  adminLogin,
+  getUsers,
+  removeUser,
+  updateUser,
+  getUserProfile,
+  updateUserProfile,
+  addToCart,
+  updateCart,
+  getUserCart,
+  clearCart,
+  addToWishlist,
+  removeFromWishlist,
+  getUserWishlist,
+  createAdmin,
+  addAddress,
+  updateAddress,
+  deleteAddress,
+  setDefaultAddress,
+  getUserAddresses,
+  uploadUserAvatar,
 };

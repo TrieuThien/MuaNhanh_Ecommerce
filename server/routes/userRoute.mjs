@@ -12,6 +12,9 @@ import {
   updateCart,
   getUserCart,
   clearCart,
+  addToWishlist,
+  removeFromWishlist,
+  getUserWishlist,
   createAdmin,
   addAddress,
   updateAddress,
@@ -40,6 +43,9 @@ router.post(`${routeValue}cart/add`, userAuth, addToCart);
 router.put(`${routeValue}cart/update`, userAuth, updateCart);
 router.get(`${routeValue}cart`, userAuth, getUserCart);
 router.delete(`${routeValue}cart/clear`, userAuth, clearCart);
+router.get(`${routeValue}wishlist`, userAuth, getUserWishlist);
+router.post(`${routeValue}wishlist/add`, userAuth, addToWishlist);
+router.post(`${routeValue}wishlist/remove`, userAuth, removeFromWishlist);
 
 // User address management routes
 router.get(`${routeValue}addresses`, userAuth, getUserAddresses);
