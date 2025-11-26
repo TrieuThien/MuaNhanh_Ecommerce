@@ -14,6 +14,7 @@ const Home = () => {
     totalOrders: 0,
     totalUsers: 0,
     totalRevenue: 0,
+    growth: {},
     recentOrders: [],
     topProducts: [],
     loading: true,
@@ -39,8 +40,10 @@ const Home = () => {
           totalOrders: serverStats.totalOrders || 0,
           totalUsers: serverStats.totalUsers || 0,
           totalRevenue: serverStats.totalRevenue || 0,
+          growth: serverStats.growth || {},
           recentOrders: serverStats.recentOrders || [],
           topProducts: serverStats.topProducts || [],
+          cachedAt: serverStats.cachedAt || null,
           loading: false,
         });
       } else {
@@ -120,6 +123,16 @@ const Home = () => {
     });
   };
 
+  function formatDateTime(dateString) {
+  const date = new Date(dateString);
+
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+
+  return `${hours}:${minutes}:${seconds}`;
+}
+
   if (stats.loading) {
     return <SkeletonLoader type="dashboard" />;
   }
@@ -130,8 +143,7 @@ const Home = () => {
         <div>
           <Title>Dashboard Overview</Title>
           <p className="text-gray-600 mt-2">
-            Welcome back! Here&apos;s what&apos;s happening with your store
-            today.
+           {"Welcome back! Here's what's happening with your store today (compared to yesterday)."}
           </p>
         </div>
 
@@ -172,8 +184,11 @@ const Home = () => {
       <div>
         <Title>Dashboard Overview</Title>
         <p className="text-gray-600 mt-2">
-          Welcome back! Here&apos;s what&apos;s happening with your store today.
+          {`Welcome back! Here's what's happening with your store today (compared to yesterday).`}
         </p>
+        <p className="text-sm text-gray-500 mt-1">
+          Updated at: {stats.cachedAt ? formatDateTime(stats.cachedAt) + " - " + formatDate(stats.cachedAt) : 'N/A'}
+          </p>
       </div>
 
       {/* Statistics Cards */}
@@ -181,8 +196,8 @@ const Home = () => {
         <StatCard
           title="Total Products"
           value={stats.totalProducts.toLocaleString()}
-          change="+12%"
-          changeType="positive"
+          change={stats.growth.products > 0 ? `+${stats.growth.products}%` : `${stats.growth.products}%`}
+          changeType={stats.growth.products > 0 ? "positive" : "negative"}
           color="bg-blue-100"
           icon={
             <svg
@@ -204,8 +219,8 @@ const Home = () => {
         <StatCard
           title="Total Orders"
           value={stats.totalOrders.toLocaleString()}
-          change="+8%"
-          changeType="positive"
+          change={stats.growth.orders > 0 ? `+${stats.growth.orders}%` : `${stats.growth.orders}%`}
+          changeType={stats.growth.orders > 0 ? "positive" : "negative"}
           color="bg-green-100"
           icon={
             <svg
@@ -227,8 +242,8 @@ const Home = () => {
         <StatCard
           title="Total Users"
           value={stats.totalUsers.toLocaleString()}
-          change="+15%"
-          changeType="positive"
+          change={stats.growth.users > 0 ? `+${stats.growth.users}%` : `${stats.growth.users}%`}  
+          changeType={stats.growth.users > 0 ? "positive" : "negative"}
           color="bg-purple-100"
           icon={
             <svg
@@ -250,8 +265,8 @@ const Home = () => {
         <StatCard
           title="Total Revenue"
           value={formatCurrency(stats.totalRevenue)}
-          change="+23%"
-          changeType="positive"
+          change={stats.growth.revenue > 0 ? `+${stats.growth.revenue}%` : `${stats.growth.revenue}%`}
+          changeType={stats.growth.revenue > 0 ? "positive" : "negative"}
           color="bg-orange-100"
           icon={
             <svg

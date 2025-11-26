@@ -581,7 +581,6 @@ const uploadUserAvatar = async (req, res) => {
 
 // Avatar get function
 const getUserAvatar = async (req, res) => {
-  console.log("Get User Avatar called");
   try {
     const { userId } = req.params;
 

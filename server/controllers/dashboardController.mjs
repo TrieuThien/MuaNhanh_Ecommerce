@@ -1,164 +1,361 @@
 import userModel from "../models/userModel.js";
 import productModel from "../models/productModel.js";
 import orderModel from "../models/orderModel.js";
+import DashboardStats from "../models/dashboardStatsModel.js";
+import AnalyticsDashboard from "../models/analyticsDashboardModel.js";
 
-// Get dashboard statistics
+// Get dashboard statistics with caching
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+
 const getDashboardStats = async (req, res) => {
   try {
-    // Verify admin role (additional check even though middleware handles it)
     if (req.user.role !== "admin") {
       return res.json({
         success: false,
-        message: "Admin access required for dashboard statistics",
+        message: "Admin access required",
       });
     }
 
-    // Get counts in parallel
-    const [totalUsers, totalProducts, totalOrders] = await Promise.all([
+    // Check if cache is still fresh
+    const latestCache = await DashboardStats.findOne().sort({ cachedAt: -1 });
+
+    if (latestCache && Date.now() - latestCache.cachedAt < CACHE_TTL) {
+      return res.json({
+        success: true,
+        stats: latestCache.toObject(),
+        cached: true,
+        message: "Dashboard stats from cache",
+      });
+    }
+
+    // If no valid cache, recalculate stats
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const endOfYesterday = new Date(today);
+    endOfYesterday.setMilliseconds(-1);
+
+    const [
+      totalUsers,
+      totalProducts,
+      totalOrders,
+      revenueResult,
+      totalUsersYesterday,
+      totalProductsYesterday,
+      totalOrdersYesterday,
+      revenueYesterdayAgg,
+      recentOrdersRaw,
+      topProductsRaw,
+      ordersByStatusRaw,
+      recentUsersRaw,
+    ] = await Promise.all([
       userModel.countDocuments(),
       productModel.countDocuments(),
       orderModel.countDocuments(),
-    ]);
-
-    // Calculate total revenue from delivered/shipped orders
-    const revenueResult = await orderModel.aggregate([
-      { $match: { status: { $in: ["delivered", "shipped", "confirmed"] } } },
-      { $group: { _id: null, totalRevenue: { $sum: "$amount" } } },
-    ]);
-
-    const totalRevenue =
-      revenueResult.length > 0 ? revenueResult[0].totalRevenue : 0;
-
-    // Get recent orders (last 5)
-    const recentOrders = await orderModel
-      .find({})
-      .populate("userId", "name email")
-      .sort({ date: -1 })
-      .limit(5);
-
-    // Get top products (you can enhance this with actual sales data)
-    const topProducts = await productModel
-      .find({})
-      .sort({ createdAt: -1 })
-      .limit(5);
-
-    // Get orders by status
-    const ordersByStatus = await orderModel.aggregate([
-      {
-        $group: {
-          _id: "$status",
-          count: { $sum: 1 },
+      orderModel.aggregate([
+        { $match: { status: { $in: ["delivered", "shipped", "confirmed"] } } },
+        { $group: { _id: null, totalRevenue: { $sum: "$amount" } } },
+      ]),
+      userModel.countDocuments({ createdAt: { $lt: today } }),
+      productModel.countDocuments({ createdAt: { $lt: today } }),
+      orderModel.countDocuments({ date: { $lt: today } }),
+      orderModel.aggregate([
+        {
+          $match: {
+            status: { $in: ["delivered", "shipped", "confirmed"] },
+            date: { $gte: yesterday, $lte: endOfYesterday },
+          },
         },
-      },
+        { $group: { _id: null, totalRevenue: { $sum: "$amount" } } },
+      ]),
+      orderModel.find({}).populate("userId", "name email").sort({ date: -1 }).limit(5).lean(),
+      productModel.find({}).sort({ createdAt: -1 }).limit(5).lean(),
+      orderModel.aggregate([
+        { $group: { _id: "$status", count: { $sum: 1 } } },
+      ]),
+      userModel.find({}).sort({ createdAt: -1 }).limit(5).select("name email createdAt").lean(),
     ]);
 
-    // Get recent users (last 5)
-    const recentUsers = await userModel
-      .find({})
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select("name email createdAt");
+    const totalRevenue = revenueResult[0]?.totalRevenue || 0;
+    const totalRevenueYesterday = revenueYesterdayAgg[0]?.totalRevenue || 0;
 
-    // Calculate growth percentages (mock data - you can implement real calculation)
-    const stats = {
+    const calcGrowth = (today, yesterday) => {
+      if (yesterday === 0) return today > 0 ? 100 : 0;
+      return ((today - yesterday) / yesterday) * 100;
+    };
+
+    const growth = {
+      users: calcGrowth(totalUsers, totalUsersYesterday).toFixed(1),
+      products: calcGrowth(totalProducts, totalProductsYesterday).toFixed(1),
+      orders: calcGrowth(totalOrders, totalOrdersYesterday).toFixed(1),
+      revenue: calcGrowth(totalRevenue, totalRevenueYesterday).toFixed(1),
+    };
+
+    const statsData = {
+      totalUsers,
       totalProducts,
       totalOrders,
-      totalUsers,
       totalRevenue,
-      recentOrders,
-      topProducts,
-      recentUsers,
-      ordersByStatus,
-      growth: {
-        products: 12, // +12%
-        orders: 8, // +8%
-        users: 15, // +15%
-        revenue: 23, // +23%
-      },
+      growth,
+      recentOrders: recentOrdersRaw,
+      topProducts: topProductsRaw,
+      recentUsers: recentUsersRaw,
+      ordersByStatus: ordersByStatusRaw,
+      cachedAt: new Date(),
     };
+
+    // Lưu vào DB (upsert để tránh tạo nhiều document)
+    await DashboardStats.findOneAndUpdate(
+      {}, // tìm document đầu tiên (chỉ nên có 1)
+      statsData,
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     res.json({
       success: true,
-      stats,
-      message: "Dashboard statistics fetched successfully",
+      stats: statsData,
+      cached: false,
+      message: "Dashboard stats refreshed",
     });
   } catch (error) {
-    console.log("Get Dashboard Stats Error:", error);
+    console.error("Get Dashboard Stats Error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// Get analytics data
+const SUCCESS_STATUSES = ["confirmed", "shipped", "delivered"];
+const PAID_PAYMENT_STATUS = ["paid"];
+
+const getAnalyticsByMonth = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.json({ success: false, message: "Admin access required" });
+    }
+
+    const { month } = req.query; // format: "2025-04"
+    if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+      return res.json({ success: false, message: "Tháng không hợp lệ." });
+    }
+
+    const [year, monthNum] = month.split("-").map(Number);
+    const startDate = new Date(year, monthNum - 1, 1); // 1/4/2025
+    const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999); // 30/4/2025
+
+    const prevMonth = monthNum === 1 
+      ? `${year - 1}-12` 
+      : `${year}-${String(monthNum - 1).padStart(2, "0")}`;
+
+    // Kiểm tra cache
+    const cached = await AnalyticsDashboard.findOne({ monthKey: month });
+    if (cached) {
+      return res.json({
+        success: true,
+        data: cached,
+        cached: true,
+        message: `Dữ liệu tháng ${month} (đã lưu trước)`
+      });
+    }
+
+    // Tính dữ liệu tháng hiện tại
+    const currentMonthData = await Promise.all([
+      orderModel.aggregate([
+        {
+          $match: {
+            date: { $gte: startDate, $lte: endDate },
+            status: { $in: SUCCESS_STATUSES },
+            paymentStatus: { $in: PAID_PAYMENT_STATUS }
+          }
+        },
+        {
+          $group: {
+            _id: null,
+            revenue: { $sum: "$amount" },
+            orders: { $sum: 1 }
+          }
+        }
+      ]),
+      orderModel.aggregate([
+        {
+          $match: {
+            date: { $gte: startDate, $lte: endDate },
+            status: { $in: SUCCESS_STATUSES },
+            paymentStatus: { $in: PAID_PAYMENT_STATUS }
+          }
+        },
+        { $group: { _id: "$userId" } },
+        { $count: "uniqueBuyers" }
+      ]),
+      userModel.countDocuments({
+        createdAt: { $gte: startDate, $lte: endDate }
+      })
+    ]);
+
+    const revenueResult = currentMonthData[0][0] || { revenue: 0, orders: 0 };
+    const uniqueBuyersResult = currentMonthData[1][0]?.uniqueBuyers || 0;
+    const totalUsers = currentMonthData[2];
+
+    const current = {
+      totalRevenue: revenueResult.revenue,
+      totalOrders: revenueResult.orders,
+      totalUsers,
+      uniqueBuyers: uniqueBuyersResult,
+      conversionRate: totalUsers > 0 ? (uniqueBuyersResult / totalUsers) * 100 : 0
+    };
+
+    // Lấy dữ liệu tháng trước để tính tăng/giảm
+    const prevCached = await AnalyticsDashboard.findOne({ monthKey: prevMonth });
+    const prev = prevCached ? {
+      totalRevenue: prevCached.totalRevenue,
+      totalOrders: prevCached.totalOrders,
+      totalUsers: prevCached.totalUsers,
+      conversionRate: parseFloat(prevCached.conversionRate)
+    } : null;
+
+    const calcGrowth = (curr, prev) => {
+      if (!prev || prev === 0) return curr > 0 ? "+100.0" : "0.0";
+      const growth = ((curr - prev) / prev) * 100;
+      return growth > 0 ? `+${growth.toFixed(1)}` : growth.toFixed(1);
+    };
+
+    const growth = prev ? {
+      revenue: calcGrowth(current.totalRevenue, prev.totalRevenue),
+      orders: calcGrowth(current.totalOrders, prev.totalOrders),
+      users: calcGrowth(current.totalUsers, prev.totalUsers),
+      conversionRate: calcGrowth(current.conversionRate, prev.conversionRate)
+    } : {
+      revenue: "0.0", orders: "0.0", users: "0.0", conversionRate: "0.0"
+    };
+
+    // Lưu vào DB (chỉ 1 bản ghi mỗi tháng)
+    const analyticsDoc = await AnalyticsDashboard.findOneAndUpdate(
+      { monthKey: month },
+      {
+        monthKey: month,
+        totalRevenue: current.totalRevenue,
+        totalOrders: current.totalOrders,
+        totalUsers: current.totalUsers,
+        uniqueBuyers: current.uniqueBuyers,
+        conversionRate: current.conversionRate.toFixed(2) + "%",
+        growth,
+        calculatedAt: new Date()
+      },
+      { upsert: true, new: true }
+    );
+
     res.json({
-      success: false,
-      message: error.message,
+      success: true,
+      data: analyticsDoc,
+      message: `Đã tính & lưu dữ liệu tháng ${month}`
     });
+
+  } catch (error) {
+    console.error("Analytics Error:", error);
+    res.json({ success: false, message: error.message });
   }
 };
 
 // Get analytics data for charts
-const getAnalytics = async (req, res) => {
+const getRevenueDataChart = async (req, res) => {
   try {
-    // Verify admin role (additional check even though middleware handles it)
-    if (req.user.role !== "admin") {
-      return res.json({
-        success: false,
-        message: "Admin access required for analytics data",
-      });
+    const { month } = req.params; // format: 2025-04
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+      return res.status(400).json({ success: false, message: "Tháng không hợp lệ" });
     }
 
-    const { period = "6months" } = req.query;
+    const [year, monthNum] = month.split("-").map(Number);
+    const startDate = new Date(year, monthNum - 1, 1);
+    const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999); // cuối tháng
 
-    let dateFilter = new Date();
-    if (period === "6months") {
-      dateFilter.setMonth(dateFilter.getMonth() - 6);
-    } else if (period === "1year") {
-      dateFilter.setFullYear(dateFilter.getFullYear() - 1);
-    } else {
-      dateFilter.setMonth(dateFilter.getMonth() - 3); // 3 months default
-    }
-
-    // Monthly orders and revenue
-    const monthlyData = await orderModel.aggregate([
-      { $match: { date: { $gte: dateFilter } } },
+    const revenueByDay = await orderModel.aggregate([
+      {
+        $match: {
+          date: { $gte: startDate, $lte: endDate },
+          status: { $in: ["confirmed", "shipped", "delivered"] },
+          paymentStatus: "paid"
+        }
+      },
       {
         $group: {
-          _id: {
-            year: { $year: "$date" },
-            month: { $month: "$date" },
-          },
-          orders: { $sum: 1 },
-          revenue: { $sum: "$amount" },
-        },
+          _id: { $dateToString: { format: "%d/%m", date: "$date" } },
+          revenue: { $sum: "$amount" }
+        }
       },
-      { $sort: { "_id.year": 1, "_id.month": 1 } },
+      { $sort: { _id: 1 } }
     ]);
 
-    // User registrations over time
-    const userRegistrations = await userModel.aggregate([
-      { $match: { createdAt: { $gte: dateFilter } } },
-      {
-        $group: {
-          _id: {
-            year: { $year: "$createdAt" },
-            month: { $month: "$createdAt" },
-          },
-          users: { $sum: 1 },
-        },
-      },
-      { $sort: { "_id.year": 1, "_id.month": 1 } },
-    ]);
+    // Tạo mảng đầy đủ 30/31 ngày (tránh lỗ hổng ngày không có đơn)
+    const daysInMonth = new Date(year, monthNum, 0).getDate();
+    const fullData = Array.from({ length: daysInMonth }, (_, i) => {
+      const dayStr = `${String(i + 1).padStart(2, "0")}/${String(monthNum).padStart(2, "0")}`;
+      const found = revenueByDay.find(item => item._id === dayStr);
+      return {
+        date: dayStr,
+        revenue: found ? found.revenue : 0
+      };
+    });
 
     res.json({
       success: true,
-      analytics: {
-        monthlyData,
-        userRegistrations,
-        period,
-      },
-      message: "Analytics data fetched successfully",
+      data: fullData,
+      meta: { month, totalRevenue: fullData.reduce((sum, d) => sum + d.revenue, 0) }
     });
+
   } catch (error) {
-    console.log("Get Analytics Error:", error);
-    res.json({
-      success: false,
-      message: error.message,
+    console.error("Revenue Chart API Error:", error);
+    res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+};
+
+const getOrdersDataChart = async (req, res) => {
+  try {
+    const { month } = req.params; // 2025-04
+    if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) {
+      return res.status(400).json({ success: false, message: "Tháng không hợp lệ" });
+    }
+
+    const [year, monthNum] = month.split("-").map(Number);
+    const startDate = new Date(year, monthNum - 1, 1);
+    const endDate = new Date(year, monthNum, 0, 23, 59, 59, 999);
+
+    const ordersByDay = await orderModel.aggregate([
+      {
+        $match: {
+          date: { $gte: startDate, $lte: endDate },
+          status: { $in: ["confirmed", "shipped", "delivered"] },
+          paymentStatus: "paid"
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%d/%m", date: "$date" } },
+          orders: { $sum: 1 }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]);
+
+    const daysInMonth = new Date(year, monthNum, 0).getDate();
+    const fullData = Array.from({ length: daysInMonth }, (_, i) => {
+      const dayStr = `${String(i + 1).padStart(2, "0")}/${String(monthNum).padStart(2, "0")}`;
+      const found = ordersByDay.find(item => item._id === dayStr);
+      return {
+        date: dayStr,
+        orders: found ? found.orders : 0
+      };
     });
+
+    res.json({
+      success: true,
+      data: fullData,
+      meta: { month, totalOrders: fullData.reduce((sum, d) => sum + d.orders, 0) }
+    });
+
+  } catch (error) {
+    console.error("Orders Chart API Error:", error);
+    res.status(500).json({ success: false, message: "Lỗi server" });
   }
 };
 
@@ -221,4 +418,4 @@ const getQuickStats = async (req, res) => {
   }
 };
 
-export { getDashboardStats, getAnalytics, getQuickStats };
+export { getDashboardStats, getAnalyticsByMonth, getRevenueDataChart, getOrdersDataChart, getQuickStats };

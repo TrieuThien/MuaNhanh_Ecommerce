@@ -116,7 +116,7 @@ const Sidebar = () => {
       icon: <MdAnalytics />,
       path: "/analytics",
       description: "View analytics & insights",
-      badge: "New",
+      badge: null,
     },
     {
       title: "Products",

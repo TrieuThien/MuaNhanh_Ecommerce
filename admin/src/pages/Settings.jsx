@@ -15,7 +15,7 @@ const Settings = () => {
           type: "text",
         },
         { label: "Default Currency", value: "USD", type: "select" },
-        { label: "Timezone", value: "UTC-5", type: "select" },
+        { label: "Timezone", value: "UTC-7", type: "select" },
       ],
     },
     {
