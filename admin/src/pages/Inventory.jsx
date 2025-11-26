@@ -3,6 +3,8 @@ import { FaBoxes, FaExclamationTriangle, FaCheckCircle } from "react-icons/fa";
 import { MdOutlineInventory, MdLowPriority } from "react-icons/md";
 import axios from "axios"
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import { useState, useEffect, useCallback } from "react";
 import { serverUrl } from "../../config";
 
@@ -17,17 +19,13 @@ const Inventory = () => {
     error: null,
   })
 
-  // const [lowStockItems, setLowStockItems] = useState({
-  //   name: "",
-  //   stock: 0,
-  //   threshold: 0,
-  // })
+  const [lowStockItems, setLowStockItems] = useState([])
 
   const fetchStatistics = useCallback(async () => {
     try {
       setStats((prev) => ({ ...prev, loading: true, error: null }));
 
-      // Fetch data from server
+      // Fetch stats data from server
       const responseStats = await axios.get(`${serverUrl}/api/product/inventory-stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -47,26 +45,20 @@ const Inventory = () => {
       else {
         throw new Error(responseStats.data.message || "Failed to fetch stats")
       }
-      
-      // const responseLowStockItems = await axios.get(`${serverUrl}/api/product/low-stock`, {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // })
-      // if (responseStats.data.success) {
-      //   const { inventoryStats } = responseStats.data;
 
-      //   setStats({
-      //     totalProducts: inventoryStats.totalProducts || 0,
-      //     lowStock: inventoryStats.lowStockItems || 0,
-      //     outOfStock: inventoryStats.outOfStock || 0,
-      //     inStock: inventoryStats.inStock || 0,
-      //     loading: false
-      //   });
-      // }
-      // else {
-      //   throw new Error(responseStats.data.message || "Failed to fetch stats")
-      // }
+      // Fetch low stock item from server
+      const responseLowStockItems = await axios.get(`${serverUrl}/api/product/low-stock`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      if (responseLowStockItems.data.success) {
+        const { products } = responseLowStockItems.data;
+        setLowStockItems(products);
+      }
+      else {
+        throw new Error(responseStats.data.message || "Failed to fetch stats")
+      }
     }
     catch (error) {
       console.log("Error fetching statstics: ", error);
@@ -109,12 +101,9 @@ const Inventory = () => {
     },
   ];
 
-  const lowStockItems = [
-    { name: "iPhone 14 Pro", stock: 5, threshold: 10 },
-    { name: "MacBook Pro", stock: 2, threshold: 5 },
-    { name: "iPad Air", stock: 8, threshold: 15 },
-    { name: "Apple Watch", stock: 3, threshold: 10 },
-  ];
+  function messageCommingSoon(){
+    toast("This feature is coming soon!", { icon: "ℹ️", duration: 1000 });
+  }
 
   return (
     <div className="p-6">
@@ -163,25 +152,29 @@ const Inventory = () => {
         </div>
         <div className="p-6">
           <div className="space-y-4">
-            {lowStockItems.map((item, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg"
-              >
-                <div>
-                  <h4 className="font-medium text-gray-900">{item.name}</h4>
-                  <p className="text-sm text-gray-600">
-                    Threshold: {item.threshold} units
-                  </p>
+            {lowStockItems.length > 0 ?
+              lowStockItems.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg"
+                >
+                  <div>
+                    <h4 className="font-medium text-gray-900">{item.name}</h4>
+                    <p className="text-sm text-gray-600">
+                      Threshold: {item.threshold} units
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-lg font-bold text-yellow-600">
+                      {item.stock}
+                    </span>
+                    <p className="text-sm text-gray-600">units left</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold text-yellow-600">
-                    {item.stock}
-                  </span>
-                  <p className="text-sm text-gray-600">units left</p>
-                </div>
-              </div>
-            ))}
+              )) :
+              <div>
+                <h4 className="font-medium text-gray-900">No low stock items</h4>
+              </div>}
           </div>
         </div>
       </div>
@@ -193,17 +186,19 @@ const Inventory = () => {
         </div>
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+            <Link
+              to="/list"
+              className="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
               <MdOutlineInventory className="text-2xl text-gray-400 mb-2 mx-auto" />
               <p className="text-sm font-medium text-gray-600">
                 Update Inventory
               </p>
-            </button>
-            <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
+            </Link>
+            <button onClick={messageCommingSoon} className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors">
               <FaBoxes className="text-2xl text-gray-400 mb-2 mx-auto" />
               <p className="text-sm font-medium text-gray-600">Bulk Import</p>
             </button>
-            <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors">
+            <button onClick={messageCommingSoon} className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-purple-500 hover:bg-purple-50 transition-colors">
               <FaCheckCircle className="text-2xl text-gray-400 mb-2 mx-auto" />
               <p className="text-sm font-medium text-gray-600">Stock Audit</p>
             </button>
