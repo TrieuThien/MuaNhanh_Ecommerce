@@ -18,6 +18,7 @@ createRoot(document.getElementById("root")).render(
             style: {
               background: "#000000",
               color: "#ffffff",
+              zIndex: 9999,
             },
           }}
         />

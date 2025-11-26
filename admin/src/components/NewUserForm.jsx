@@ -86,6 +86,21 @@ const NewUserForm = ({
     }
   }, [selectedUser, fetchUserAddresses]);
 
+  // Reset form after sent
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      role: "user",
+      isActive: true,
+      avatar: "",
+    });
+    setAvatarFile(null);
+    setAvatarPreview("");
+    setUserAddresses([]);
+  };
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -194,6 +209,7 @@ const NewUserForm = ({
       if (data?.success) {
         toast.success(data?.message);
         setIsOpen(false);
+        resetForm();
         getUsersList();
       } else {
         toast.error(data?.message);
@@ -216,7 +232,7 @@ const NewUserForm = ({
     <Dialog
       open={isOpen}
       as="div"
-      className="relative z-[9999] focus:outline-none"
+      className="relative z-[999] focus:outline-none"
       onClose={close}
     >
       {/* Background overlay */}
@@ -246,8 +262,8 @@ const NewUserForm = ({
                 {isReadOnly
                   ? "👤 User Details"
                   : selectedUser
-                  ? "✏️ Edit User"
-                  : "➕ Add New User"}
+                    ? "✏️ Edit User"
+                    : "➕ Add New User"}
               </DialogTitle>
               <button
                 onClick={() => setIsOpen(false)}
@@ -320,9 +336,8 @@ const NewUserForm = ({
                       value={formData.role}
                       onChange={handleChange}
                       disabled={isReadOnly}
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent ${
-                        isReadOnly ? "bg-gray-50" : ""
-                      }`}
+                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent ${isReadOnly ? "bg-gray-50" : ""
+                        }`}
                     >
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
@@ -341,9 +356,8 @@ const NewUserForm = ({
                         }));
                       }}
                       disabled={isReadOnly}
-                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent ${
-                        isReadOnly ? "bg-gray-50" : ""
-                      }`}
+                      className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-black focus:border-transparent ${isReadOnly ? "bg-gray-50" : ""
+                        }`}
                     >
                       <option value="true">Active</option>
                       <option value="false">Inactive</option>
@@ -463,11 +477,10 @@ const NewUserForm = ({
                         >
                           <div className="flex items-center gap-2">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs ${
-                                addr.isDefault
+                              className={`px-2 py-1 rounded-full text-xs ${addr.isDefault
                                   ? "bg-blue-100 text-blue-800"
                                   : "bg-gray-100 text-gray-600"
-                              }`}
+                                }`}
                             >
                               {addr.label}
                             </span>
@@ -503,11 +516,10 @@ const NewUserForm = ({
                     <div className="bg-gray-50 rounded-lg p-4">
                       <Label>Account Status</Label>
                       <p
-                        className={`font-medium ${
-                          selectedUser.isActive
+                        className={`font-medium ${selectedUser.isActive
                             ? "text-green-600"
                             : "text-red-600"
-                        }`}
+                          }`}
                       >
                         {selectedUser.isActive ? "Active" : "Inactive"}
                       </p>

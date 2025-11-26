@@ -234,9 +234,9 @@ const removeUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const { _id, name, email, password, role, avatar, addresses, isActive } =
+    const _id = req.params.id;
+    const { name, email, password, role, avatar, addresses, isActive } =
       req.body;
-
     const user = await userModel.findById(_id);
     if (!user) {
       return res.json({ success: false, message: "User not found" });
@@ -317,7 +317,6 @@ const getUsers = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
-
     res.json({
       success: true,
       total,
