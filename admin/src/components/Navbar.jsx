@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { logo } from "../assets/images";
 import { FaUser, FaCog, FaChevronDown, FaUserShield } from "react-icons/fa";
 import { MdNotifications, MdDashboard } from "react-icons/md";
+import { serverUrl } from "../../config";
 
 const Navbar = () => {
   const { user } = useSelector((state) => state.auth);
@@ -11,6 +12,7 @@ const Navbar = () => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const userMenuRef = useRef(null);
   const notificationRef = useRef(null);
+  const [avatar, setAvatar] = useState(user?.avatar);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
@@ -26,12 +28,23 @@ const Navbar = () => {
       }
     };
 
+    if (user) {
+      fetch(`${serverUrl}/api/user/${user.id}/avatar`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setAvatar(data.avatarUrl);
+        });
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
-
+  }, [user]);
   const getUserInitials = (name) => {
     if (!name) return "A";
     return name
@@ -145,9 +158,9 @@ const Navbar = () => {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-50 transition-colors duration-200"
                 >
-                  {user?.avatar ? (
+                  {avatar ? (
                     <img
-                      src={user.avatar}
+                      src={avatar}
                       alt={user.name}
                       className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
                     />
@@ -157,9 +170,8 @@ const Navbar = () => {
                     </div>
                   )}
                   <FaChevronDown
-                    className={`text-gray-600 text-sm transition-transform duration-200 ${
-                      isUserMenuOpen ? "rotate-180" : ""
-                    }`}
+                    className={`text-gray-600 text-sm transition-transform duration-200 ${isUserMenuOpen ? "rotate-180" : ""
+                      }`}
                   />
                 </button>
               </div>

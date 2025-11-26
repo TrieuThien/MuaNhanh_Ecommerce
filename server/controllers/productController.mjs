@@ -55,7 +55,7 @@ const addProduct = async (req, res) => {
       images.map(async (item) => {
         try {
           let result = await cloudinary.uploader.upload(item.path, {
-            folder: "orebi/products",
+            folder: "muanhanh/products",
             resource_type: "image",
             transformation: [
               { width: 800, height: 800, crop: "fill" },
@@ -417,7 +417,7 @@ const updateProduct = async (req, res) => {
       try {
         const uploadPromises = newImages.map(async (item, index) => {
           const result = await cloudinary.uploader.upload(item.path, {
-            folder: "orebi/products",
+            folder: "muanhanh/products",
             resource_type: "image",
             transformation: [
               { width: 800, height: 800, crop: "fill" },

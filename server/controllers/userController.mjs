@@ -549,9 +549,9 @@ const uploadUserAvatar = async (req, res) => {
       return res.json({ success: false, message: "No file uploaded" });
     }
 
-    // Upload image to Cloudinary in the orebi/users folder
+    // Upload image to Cloudinary in the muanhanh/users folder
     const uploadResult = await cloudinary.uploader.upload(req.file.path, {
-      folder: "orebi/users",
+      folder: "muanhanh/users",
       resource_type: "image",
       transformation: [
         { width: 400, height: 400, crop: "fill", gravity: "face" },
@@ -579,6 +579,33 @@ const uploadUserAvatar = async (req, res) => {
   }
 };
 
+// Avatar get function
+const getUserAvatar = async (req, res) => {
+  console.log("Get User Avatar called");
+  try {
+    const { userId } = req.params;
+
+    // Only allow:
+    // - Owner
+    // - Admin
+    if (req.user.id !== userId && req.user.role !== "admin") {
+      return res.json({
+        success: false,
+        message: "You are not allowed to view this avatar",
+      });
+    }
+    
+    const user = await userModel.findById(userId).select("avatar");
+    if (!user) {
+      return res.json({ success: false, message: "User not found" });
+    }
+
+    res.json({ success: true, avatarUrl: user.avatar });
+  } catch (error) {
+    console.log("Get Avatar Error", error);
+    res.json({ success: false, message: error.message });
+  }
+};  
 
 // Get user profile
 const getUserProfile = async (req, res) => {
@@ -945,4 +972,5 @@ export {
   setDefaultAddress,
   getUserAddresses,
   uploadUserAvatar,
+  getUserAvatar,
 };

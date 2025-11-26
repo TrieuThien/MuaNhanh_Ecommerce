@@ -152,7 +152,7 @@ const SignUp = () => {
                 Create Account
               </h1>
               <p className="text-gray-600">
-                Join Orebi Shopping and start your journey
+                Join Muanhanh Shopping and start your journey
               </p>
             </div>
 

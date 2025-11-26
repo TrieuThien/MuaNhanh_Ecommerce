@@ -22,6 +22,7 @@ import {
   setDefaultAddress,
   getUserAddresses,
   uploadUserAvatar,
+  getUserAvatar,
 } from "../controllers/userController.mjs";
 import adminAuth from "../middleware/adminAuth.js";
 import userAuth from "../middleware/userAuth.js";
@@ -65,6 +66,9 @@ router.post(
   avatarUpload.single("avatar"),
   uploadUserAvatar
 );
+
+// Avatar get route
+router.get(`${routeValue}:userId/avatar`, userAuth, getUserAvatar);
 
 // Address management routes (admin only)
 router.get(`${routeValue}:userId/addresses`, adminAuth, getUserAddresses);
