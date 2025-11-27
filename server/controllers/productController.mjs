@@ -504,31 +504,88 @@ const updateProduct = async (req, res) => {
 // ===============================
 const productInventoryStats = async (req, res) => {
   try {
-    const totalProducts = await productModel.countDocuments();
+    const stats = await productModel.aggregate([
+      {
+        $facet: {
+          // 1. Total products
+          totalProducts: [{ $count: "count" }],
 
-    // Low stock: ví dụ < 10 (hoặc nhận threshold từ query)
-    const lowStockThreshold = Number(req.query.lowStock || 10);
+          // 2. Products in stock (stock > 0)
+          inStock: [
+            { $match: { stock: { $gt: 0 } } },
+            { $count: "count" }
+          ],
 
-    const lowStockItems = await productModel.countDocuments({
-      stock: { $gt: 0, $lte: lowStockThreshold },
-    });
+          // 3. Products out of stock (stock = 0)
+          outOfStock: [
+            { $match: { stock: 0 } },
+            { $count: "count" }
+          ],
 
-    const outOfStock = await productModel.countDocuments({ stock: 0 });
+          // 4. Low stock products: stock > 0 and stock <= threshold
+          // If threshold does not exist or = 0 → default to 10
+          lowStockItems: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $gt: ["$stock", 0] },
+                    {
+                      $lte: [
+                        "$stock",
+                        {
+                          $ifNull: [
+                            "$threshold",
+                            10  // Default value if threshold does not exist
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            { $count: "count" }
+          ]
+        }
+      },
+      {
+        $project: {
+          totalProducts: { $arrayElemAt: ["$totalProducts.count", 0] },
+          inStock: { $arrayElemAt: ["$inStock.count", 0] },
+          outOfStock: { $arrayElemAt: ["$outOfStock.count", 0] },
+          lowStockItems: { $arrayElemAt: ["$lowStockItems.count", 0] },
+        }
+      },
+      {
+        // Ensure values are 0 if no results (avoid undefined)
+        $addFields: {
+          totalProducts: { $ifNull: ["$totalProducts", 0] },
+          inStock: { $ifNull: ["$inStock", 0] },
+          outOfStock: { $ifNull: ["$outOfStock", 0] },
+          lowStockItems: { $ifNull: ["$lowStockItems", 0] },
+        }
+      }
+    ]);
 
-    const inStock = await productModel.countDocuments({ stock: { $gt: 0 } });
-    
+    const result = stats[0] || {
+      totalProducts: 0,
+      inStock: 0,
+      outOfStock: 0,
+      lowStockItems: 0,
+    };
+
     return res.json({
       success: true,
-      inventoryStats: {
-        totalProducts,
-        lowStockItems,
-        outOfStock,
-        inStock,
-      },
+      inventoryStats: result,
     });
   } catch (error) {
-    console.log("Product Stats Error:", error);
-    res.json({ success: false, message: error.message });
+    console.error("Product Inventory Stats Error:", error);
+    return res.json({
+      success: false,
+      message: "Lỗi khi lấy thống kê tồn kho",
+      error: error.message,
+    });
   }
 };
 
@@ -539,11 +596,11 @@ const lowStockProducts = async (req, res) => {
   try {
     const limit = Number(req.query.limit) || 10;
 
-    // Lấy các sản phẩm có stock > 0 và stock <= threshold
+    // Get products with stock > 0 and stock <= threshold
     const products = await productModel
       .find({
         stock: { $gt: 0 },
-        $expr: { $lte: ["$stock", "$threshold"] }, // MongoDB expression để so sánh stock với threshold của sản phẩm
+        $expr: { $lte: ["$stock", "$threshold"] }, // MongoDB expression to compare stock with product's threshold
       })
       .sort({ stock: 1 }) // ít hàng lên trước
       .limit(limit);
