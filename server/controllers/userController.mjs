@@ -593,7 +593,7 @@ const getUserAvatar = async (req, res) => {
         message: "You are not allowed to view this avatar",
       });
     }
-    
+
     const user = await userModel.findById(userId).select("avatar");
     if (!user) {
       return res.json({ success: false, message: "User not found" });
@@ -604,7 +604,7 @@ const getUserAvatar = async (req, res) => {
     console.log("Get Avatar Error", error);
     res.json({ success: false, message: error.message });
   }
-};  
+};
 
 // Get user profile
 const getUserProfile = async (req, res) => {
@@ -832,7 +832,7 @@ const addToWishlist = async (req, res) => {
     if (!user) {
       return res.json({ success: false, message: "User not found" })
     }
-  
+
     const product = await productModel.findById(req.body.productId);
     if (!product) {
       return res.json({ success: false, message: "Product not found" })
@@ -849,6 +849,18 @@ const addToWishlist = async (req, res) => {
     user.wishlist[productKey] = true;
     user.markModified('wishlist');
     await user.save();
+
+    // Add timestamp for when the product was added to wishlist
+    await userModel.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          [`wishlist.${productId}`]: {
+            addedAt: new Date(),
+          },
+        },
+      }
+    );
     res.json({ success: true, message: "Product added to wishlist" })
   }
   catch (error) {
@@ -865,8 +877,12 @@ const removeFromWishlist = async (req, res) => {
       return res.json({ success: false, message: "User not found" })
     }
     const { productId } = req.body;
-    delete user.wishlist[productId];
-    await user.save();
+
+    await userModel.updateOne(
+      { _id: user._id },
+      { $unset: { [`wishlist.${productId}`]: "" } }
+    );
+    
     res.json({ success: true, message: "Product removed from wishlist" })
   }
   catch (error) {
@@ -878,15 +894,49 @@ const removeFromWishlist = async (req, res) => {
 // Get user wishlist
 const getUserWishlist = async (req, res) => {
   try {
-    const user = await userModel.findById(req.user.id);
+    const user = await userModel
+      .findById(req.user.id)
+      .select("wishlist") // Only select wishlist field
+      .lean();
+
     if (!user) {
-      return res.json({ success: false, message: "User not found" })
+      return res.json({ success: false, message: "User not found" });
     }
-    res.json({ success: true, wishlist: Object.keys(user.wishlist) })
-  }
-  catch (error) {
-    console.log("Get Wishlist Error", error);
-    res.json({ success: false, message: error.message })
+
+    // If wishlist is empty or doesn't exist
+    if (!user.wishlist || Object.keys(user.wishlist).length === 0) {
+      return res.json({ success: true, wishlist: [] });
+    }
+
+    // Get list of productIds from wishlist object
+    const productIds = Object.keys(user.wishlist);
+
+    // Populate product details
+    const products = await productModel
+      .find({ _id: { $in: productIds } })
+      .select("name images price discountedPercentage stock soldQuantity category brand badge isAvailable offer")
+      .lean();
+
+    // Sort by the order added to wishlist (if you store addedAt)
+    // If you store the time when adding to wishlist (recommended), then sorting is possible
+    const sortedProducts = products.sort((a, b) => {
+      const timeA = user.wishlist[a._id]?.addedAt || 0;
+      const timeB = user.wishlist[b._id]?.addedAt || 0;
+      return new Date(timeB) - new Date(timeA); // newest first
+    });
+
+    return res.json({
+      success: true,
+      wishlist: sortedProducts, // Return full product array
+      count: sortedProducts.length,
+    });
+
+  } catch (error) {
+    console.error("Get Wishlist Error:", error);
+    return res.json({
+      success: false,
+      message: "Lỗi khi lấy danh sách yêu thích",
+    });
   }
 };
 
