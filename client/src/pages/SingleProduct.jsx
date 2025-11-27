@@ -25,6 +25,13 @@ const SingleProduct = () => {
   const { id } = useParams();
   const [loadingProduct, setLoadingProduct] = useState(true);
 
+  const [reviewsData, setReviewsData] = useState({
+    averageRating: 0,
+    totalReviews: 0,
+    reviews: [],
+  });
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
   // Fetch product details based on ID from URL or state
   useEffect(() => {
     const fetchProduct = async () => {
@@ -58,6 +65,27 @@ const SingleProduct = () => {
       }
     };
 
+    const fetchReviews = async () => {
+      try {
+        setLoadingReviews(true);
+        const response = await fetch(`${serverUrl}/api/review/product/${id}/reviews`);
+        const result = await response.json();
+
+        if (result.success) {
+          setReviewsData(result.data);
+        } else {
+          console.error("Failed to load reviews:", result.message);
+          setReviewsData({ averageRating: 0, totalReviews: 0, reviews: [] });
+        }
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+        toast.error("Không thể tải đánh giá");
+      } finally {
+        setLoadingReviews(false);
+      }
+    };
+
+    fetchReviews();
     fetchProduct();
   }, [id, location.state, navigate]);
 
@@ -271,7 +299,7 @@ const SingleProduct = () => {
                 {Array.from({ length: 5 }).map((_, index) => (
                   <MdStar
                     key={index}
-                    className={`w-5 h-5 ${index < Math.floor(productInfo?.ratings || 0)
+                    className={`w-5 h-5 ${index < Math.floor(reviewsData.averageRating || 0)
                       ? "text-yellow-400"
                       : "text-gray-300"
                       }`}
@@ -279,8 +307,8 @@ const SingleProduct = () => {
                 ))}
               </div>
               <span className="text-sm text-gray-600">
-                Rated {productInfo?.ratings?.toFixed(1) || "0.0"} out of 5 based
-                on {productInfo?.reviews?.length || 0} customer reviews
+                Rated {reviewsData.averageRating.toFixed(1) || "0.0"} out of 5 based
+                on {reviewsData.totalReviews || 0} customer reviews
               </span>
             </div>
 
@@ -357,7 +385,7 @@ const SingleProduct = () => {
                   }`}
               >
                 {tab === "reviews"
-                  ? `Reviews (${productInfo?.reviews?.length || 0})`
+                  ? `Reviews (${reviewsData.totalReviews || 0})`
                   : tab}
               </button>
             ))}
@@ -375,18 +403,23 @@ const SingleProduct = () => {
             )}
 
             {activeTab === "reviews" && (
+              loadingReviews ? (
+                <div> 
+                  <p>Loading reviews...</p>
+                </div>
+              ) : (
               <div className="space-y-6">
                 <h3 className="text-2xl font-light mb-6">Customer Reviews</h3>
-                {productInfo?.reviews?.length > 0 ? (
+                {reviewsData.totalReviews > 0 ? (
                   <div className="space-y-6">
-                    {productInfo.reviews.map((review, index) => (
+                    {reviewsData.reviews.map((review, index) => (
                       <div
                         key={index}
                         className="border-b border-gray-200 pb-6 last:border-b-0"
                       >
                         <div className="flex items-start gap-4">
                           <img
-                            src={review.image}
+                            src={review.reviewerAvatar}
                             alt={review.reviewerName}
                             className="w-12 h-12 rounded-full object-cover"
                           />
@@ -412,6 +445,9 @@ const SingleProduct = () => {
                             <p className="text-gray-600 leading-relaxed">
                               {review.comment}
                             </p>
+                            <p className="text-gray-600 leading-relaxed">
+                              {new Date(review.createdAt).toLocaleDateString()}
+                            </p>
                           </div>
                         </div>
                       </div>
@@ -422,7 +458,7 @@ const SingleProduct = () => {
                     No reviews yet. Be the first to leave a review!
                   </p>
                 )}
-              </div>
+              </div>)
             )}
           </div>
         </motion.div>
@@ -484,7 +520,7 @@ const SingleProduct = () => {
                       {Array.from({ length: 5 }).map((_, starIndex) => (
                         <MdStar
                           key={starIndex}
-                          className={`w-4 h-4 ${starIndex < Math.floor(product.ratings || 4)
+                          className={`w-4 h-4 ${starIndex < Math.floor(product.averageRating || 0)
                             ? "text-yellow-400"
                             : "text-gray-300"
                             }`}
@@ -492,7 +528,7 @@ const SingleProduct = () => {
                       ))}
                     </div>
                     <span className="text-sm text-gray-500">
-                      {product.ratings?.toFixed(1) || "4.0"}
+                      {product.averageRating.toFixed(1) || "0.0"}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 mb-3">

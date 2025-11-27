@@ -118,6 +118,124 @@ const addProduct = async (req, res) => {
 };
 
 // List products with filtering
+// const listProducts = async (req, res) => {
+//   try {
+//     const {
+//       _type,
+//       _id,
+//       _search,
+//       brand,
+//       category,
+//       offer,
+//       onSale,
+//       isAvailable,
+//       _page = 1,
+//       _perPage = 25,
+//     } = req.query;
+
+//     // Filter by specific ID
+//     if (_id) {
+//       const dbProduct = await productModel.findById(_id);
+//       if (dbProduct) {
+//         // Format product for frontend compatibility
+//         const formattedProduct = {
+//           ...dbProduct.toObject(),
+//           image:
+//             dbProduct.images && dbProduct.images.length > 0
+//               ? dbProduct.images[0]
+//               : "",
+//         };
+//         return res.json({ success: true, product: formattedProduct });
+//       } else {
+//         return res
+//           .status(404)
+//           .json({ success: false, message: "Product not found" });
+//       }
+//     }
+
+//     // Build filter object for database query
+//     let filter = {};
+
+//     // Filter by availability (only show available products by default)
+//     // if (isAvailable !== "false") {
+//     //   filter.isAvailable = true;
+//     // }
+
+//     // Filter by type
+//     if (_type) {
+//       filter._type = _type;
+//     }
+
+//     // Filter by brand
+//     if (brand) {
+//       filter.brand = brand;
+//     }
+
+//     // Filter by category
+//     if (category) {
+//       filter.category = category;
+//     }
+
+//     // Filter by offer
+//     if (offer === "true") {
+//       filter.offer = true;
+//     }
+
+//     // Filter by onSale
+//     if (onSale === "true") {
+//       filter.onSale = true;
+//     }
+
+//     // Search by name or description
+//     if (_search) {
+//       const searchRegex = new RegExp(_search, "i");
+//       filter.$or = [
+//         { name: searchRegex },
+//         { description: searchRegex },
+//         { tags: { $in: [searchRegex] } },
+//       ];
+//     }
+
+//     // Get database products
+//     let dbProducts = await productModel.find(filter).sort({ createdAt: -1 });
+
+//     // Format database products for frontend compatibility
+//     let formattedDbProducts = dbProducts.map((product) => ({
+//       ...product.toObject(),
+//       image:
+//         product.images && product.images.length > 0 ? product.images[0] : "",
+//     }));
+
+//     // Apply pagination
+//     const page = parseInt(_page, 10) || 1;
+//     const perPage = parseInt(_perPage, 10) || 25;
+//     const startIndex = (page - 1) * perPage;
+//     const endIndex = page * perPage;
+//     const paginatedProducts = formattedDbProducts.slice(startIndex, endIndex);
+
+//     // Return response based on whether pagination is requested
+//     if (_page || _perPage) {
+//       res.json({
+//         success: true,
+//         products: paginatedProducts,
+//         currentPage: page,
+//         perPage,
+//         totalItems: formattedDbProducts.length,
+//         totalPages: Math.ceil(formattedDbProducts.length / perPage),
+//       });
+//     } else {
+//       res.json({
+//         success: true,
+//         products: formattedDbProducts,
+//         total: formattedDbProducts.length,
+//       });
+//     }
+//   } catch (error) {
+//     console.log("List products error:", error);
+//     res.json({ success: false, message: error.message });
+//   }
+// };
+
 const listProducts = async (req, res) => {
   try {
     const {
@@ -133,62 +251,45 @@ const listProducts = async (req, res) => {
       _perPage = 25,
     } = req.query;
 
-    // Filter by specific ID
+    // === TRƯỜNG HỢP TÌM THEO ID ===
     if (_id) {
-      const dbProduct = await productModel.findById(_id);
-      if (dbProduct) {
-        // Format product for frontend compatibility
-        const formattedProduct = {
-          ...dbProduct.toObject(),
-          image:
-            dbProduct.images && dbProduct.images.length > 0
-              ? dbProduct.images[0]
-              : "",
-        };
-        return res.json({ success: true, product: formattedProduct });
-      } else {
-        return res
-          .status(404)
-          .json({ success: false, message: "Product not found" });
+      if (!mongoose.Types.ObjectId.isValid(_id)) {
+        return res.status(400).json({ success: false, message: "Invalid product ID" });
       }
+
+      const dbProduct = await productModel.findById(_id);
+      if (!dbProduct) {
+        return res.status(404).json({ success: false, message: "Product not found" });
+      }
+
+      const reviews = dbProduct.reviews || [];
+      const totalReviews = reviews.length;
+      const averageRating = totalReviews > 0
+        ? Math.round((reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews) * 10) / 10
+        : 0;
+
+      const formattedProduct = {
+        ...dbProduct.toObject(),
+        image: dbProduct.images?.[0] || "",
+        averageRating,
+        totalReviews,
+      };
+
+      return res.json({ success: true, product: formattedProduct });
     }
 
-    // Build filter object for database query
+    // === XÂY DỰNG BỘ LỌC ===
     let filter = {};
 
-    // Filter by availability (only show available products by default)
-    // if (isAvailable !== "false") {
-    //   filter.isAvailable = true;
-    // }
+    if (_type) filter._type = _type;
+    if (brand) filter.brand = brand;
+    if (category) filter.category = category;
+    if (offer === "true") filter.offer = true;
+    if (onSale === "true") filter.onSale = true;
 
-    // Filter by type
-    if (_type) {
-      filter._type = _type;
-    }
-
-    // Filter by brand
-    if (brand) {
-      filter.brand = brand;
-    }
-
-    // Filter by category
-    if (category) {
-      filter.category = category;
-    }
-
-    // Filter by offer
-    if (offer === "true") {
-      filter.offer = true;
-    }
-
-    // Filter by onSale
-    if (onSale === "true") {
-      filter.onSale = true;
-    }
-
-    // Search by name or description
+    // Tìm kiếm tên, mô tả, tags
     if (_search) {
-      const searchRegex = new RegExp(_search, "i");
+      const searchRegex = new RegExp(_search.trim(), "i");
       filter.$or = [
         { name: searchRegex },
         { description: searchRegex },
@@ -196,43 +297,92 @@ const listProducts = async (req, res) => {
       ];
     }
 
-    // Get database products
-    let dbProducts = await productModel.find(filter).sort({ createdAt: -1 });
-
-    // Format database products for frontend compatibility
-    let formattedDbProducts = dbProducts.map((product) => ({
-      ...product.toObject(),
-      image:
-        product.images && product.images.length > 0 ? product.images[0] : "",
-    }));
-
-    // Apply pagination
+    // === LẤY SẢN PHẨM + TÍNH RATING TRONG MỘT LẦN QUERY (TỐI ƯU NHẤT) ===
     const page = parseInt(_page, 10) || 1;
     const perPage = parseInt(_perPage, 10) || 25;
-    const startIndex = (page - 1) * perPage;
-    const endIndex = page * perPage;
-    const paginatedProducts = formattedDbProducts.slice(startIndex, endIndex);
+    const skip = (page - 1) * perPage;
 
-    // Return response based on whether pagination is requested
-    if (_page || _perPage) {
-      res.json({
-        success: true,
-        products: paginatedProducts,
+    // Dùng aggregation để tính rating ngay trong MongoDB → cực nhanh!
+    const products = await productModel.aggregate([
+      { $match: filter },
+
+      // Tính averageRating và totalReviews
+      {
+        $addFields: {
+          totalReviews: { $size: { $ifNull: ["$reviews", []] } },
+          averageRating: {
+            $cond: {
+              if: { $eq: [{ $size: { $ifNull: ["$reviews", []] } }, 0] },
+              then: 0,
+              else: {
+                $round: [
+                  {
+                    $divide: [
+                      { $sum: "$reviews.rating" },
+                      { $size: { $ifNull: ["$reviews", []] } }
+                    ]
+                  },
+                  1
+                ]
+              }
+            }
+          }
+        }
+      },
+
+      // Sắp xếp + phân trang
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: perPage },
+
+      // Format lại dữ liệu trả về
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          images: 1,
+          price: 1,
+          discountedPercentage: 1,
+          category: 1,
+          brand: 1,
+          offer: 1,
+          onSale: 1,
+          description: 1,
+          tags: 1,
+          createdAt: 1,
+          image: { $arrayElemAt: ["$images", 0] }, // ảnh đầu tiên
+          averageRating: 1,
+          totalReviews: 1,
+        }
+      }
+    ]);
+
+    // Đếm tổng số sản phẩm (cho phân trang)
+    const totalItems = await productModel.countDocuments(filter);
+
+    const totalPages = Math.ceil(totalItems / perPage);
+
+    // === TRẢ VỀ KẾT QUẢ ===
+    return res.json({
+      success: true,
+      products,
+      pagination: {
         currentPage: page,
         perPage,
-        totalItems: formattedDbProducts.length,
-        totalPages: Math.ceil(formattedDbProducts.length / perPage),
-      });
-    } else {
-      res.json({
-        success: true,
-        products: formattedDbProducts,
-        total: formattedDbProducts.length,
-      });
-    }
+        totalItems,
+        totalPages,
+        hasNext: page < totalPages,
+        hasPrev: page > 1,
+      },
+    });
+
   } catch (error) {
-    console.log("List products error:", error);
-    res.json({ success: false, message: error.message });
+    console.error("List products error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+      error: error.message,
+    });
   }
 };
 

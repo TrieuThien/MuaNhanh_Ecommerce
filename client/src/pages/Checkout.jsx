@@ -1,9 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import Container from "../components/Container";
 import PriceFormat from "../components/PriceFormat";
 import StripePayment from "../components/StripePayment";
-import toast from "react-hot-toast";
+import OrderReviewForm from "../components/ReviewOrderItems";
+
 import {
   FaCheckCircle,
   FaCreditCard,
@@ -15,6 +17,7 @@ import {
   FaPhone,
   FaArrowLeft,
 } from "react-icons/fa";
+import { serverUrl } from "../../config";
 
 const Checkout = () => {
   const { orderId } = useParams();
@@ -22,12 +25,49 @@ const Checkout = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentStep, setPaymentStep] = useState("selection"); // 'selection', 'stripe', 'processing'
+  const [reviewButton, setReviewButton] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  
+  const handleReviewButtonClick = () => {
+    if (reviewButton)
+      setReviewButton(false);
+    else
+      setReviewButton(true);
+  };
+  
+  useEffect(() => {
+    const fetchProductReviewsInOrder = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${serverUrl}/api/review/order/${orderId}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setReviews(data.reviews);
+      } else {
+        console.error("Failed to fetch reviews:", data.message);
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      return [];
+    }
+    };
+    fetchProductReviewsInOrder();
+  }, [orderId]);
 
   const fetchOrderDetails = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8000/api/order/user/${orderId}`,
+        `${serverUrl}/api/order/user/${orderId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -140,7 +180,6 @@ const Checkout = () => {
       </div>
     );
   }
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -407,7 +446,13 @@ const Checkout = () => {
                 </div>
               )}
 
-              <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="flex flex-col gap-3 mt-6 pt-6 border-t border-gray-200">
+                <button
+                  onClick={handleReviewButtonClick}
+                  className="w-full bg-green-100 border-green-200 text-green-900 py-3 px-4 rounded-lg hover:bg-green-200 transition-colors font-medium"
+                >
+                  { reviewButton ? "Hide Review Form" : "Comment Your Orders"}
+                </button>
                 <button
                   onClick={() => navigate("/orders")}
                   className="w-full bg-gray-100 text-gray-900 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium"
@@ -419,6 +464,31 @@ const Checkout = () => {
           </div>
         </div>
       </Container>
+      
+      {order.status === "delivered" && reviewButton && (
+        <Container className="py-8">
+          <OrderReviewForm
+            orderId={order._id}
+            items={order.items.map((item) => ({
+              productId: item.productId._id, 
+              name: item.name,
+              image: item.image,
+              price: item.price,
+              quantity: item.quantity,
+            }))}
+            existingReviews={reviews}
+            onReviewSuccess={() => {
+              // Can add any action after successful review submission
+            }}
+          />
+        </Container>
+      )}
+
+      {order.status === "delivered" && (
+        <div className="bg-green-100 border-t border-b border-green-200 text-green-800 px-4 py-3 text-center mt-8">
+          Thank you for shopping with us! We hope you enjoy your purchase.
+        </div>
+      )}
     </div>
   );
 };
