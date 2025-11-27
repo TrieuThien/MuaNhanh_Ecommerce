@@ -278,6 +278,7 @@ const removeProduct = async (req, res) => {
 // Single product
 const singleProducts = async (req, res) => {
   try {
+    console.log("Single product request received with params:", req.params, "and query:", req.query);
     const productId = req.body._id || req.query._id || req.params.id;
 
     if (!productId) {

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Container from "../components/Container";
 import { MdStar, MdFavoriteBorder, MdShare } from "react-icons/md";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { getData } from "../helpers/index";
+import NotFound from "./NotFound";
 import { serverUrl } from "../../config";
 
 import AddToCartButton from "../components/AddToCartButton";
@@ -21,9 +22,45 @@ const SingleProduct = () => {
   const [loadingRelated, setLoadingRelated] = useState(false);
   const [hasChanged, setHasChanged] = useState(false);
 
+  const { id } = useParams();
+  const [loadingProduct, setLoadingProduct] = useState(true);
+
+  // Fetch product details based on ID from URL or state
   useEffect(() => {
-    setProductInfo(location.state.item);
-  }, [location, productInfo]);
+    const fetchProduct = async () => {
+      try {
+        setLoadingProduct(true);
+
+        // Use product data from location state if available
+        if (location.state?.item) {
+          setProductInfo(location.state.item);
+          setLoadingProduct(false);
+          return;
+        }
+
+        // If no state → fetch from API using ID in URL
+        if (id) {
+          const response = await fetch(`${serverUrl}/api/product/single/${id}`);
+          const data = await response.json();
+          if (data.success && data.product) {
+            setProductInfo(data.product);
+
+          } else {
+            toast.error("Product not found");
+            navigate("/shop");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching product:", error);
+        toast.error("Error loading product");
+      } finally {
+        setLoadingProduct(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id, location.state, navigate]);
+
 
   // Fetch related products based on category
   useEffect(() => {
@@ -111,6 +148,22 @@ const SingleProduct = () => {
       toast.success("Product link copied to clipboard");
     }
   };
+
+  // Display loading while waiting for data
+  if (loadingProduct) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
+
+  if (!productInfo && loadingProduct) {
+    return (
+      <NotFound />
+    );
+  }
+
   return (
     <div className="bg-white min-h-screen">
       <Container className="py-8">

@@ -9,14 +9,14 @@ import {
 import { twMerge } from "tailwind-merge";
 
 const linkData = [
-  { icon: <FaGithub />, href: "https://github.com/" },
-  { icon: <FaYoutube />, href: "https://www.youtube.com/@reactjsBD" },
+  { icon: <FaGithub />, href: "https://github.com/trieuthien" },
+  { icon: <FaYoutube />, href: "https://www.youtube.com/@codeforlife5978" },
   {
     icon: <FaLinkedin />,
-    href: "https://www.linkedin.com/in/noor-mohammad-ab2245193/",
+    href: "https://www.linkedin.com/in/lam-trieu-thien-0b0679203/",
   },
-  { icon: <FaFacebook />, href: "https://www.youtube.com/@reactjsBD" },
-  { icon: <FaEnvelope />, href: "https://www.youtube.com/@reactjsBD" },
+  { icon: <FaFacebook />, href: "https://www.facebook.com/trieuthien.official" },
+  { icon: <FaEnvelope />, href: "https://www.facebook.com/trieuthien.official" },
 ];
 
 const SocialLinks = ({ className, iconStyle }) => {

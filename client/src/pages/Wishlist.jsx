@@ -45,6 +45,10 @@ const Wishlist = () => {
 
   }, [userInfo, navigate]);
 
+  const handleProductDetails = () => {
+    navigate(`/product/${item?._id}`);
+  };
+
   const removeFromWishlist = async (productId) => {
     try {
       const token = localStorage.getItem("token");
@@ -196,13 +200,13 @@ const Wishlist = () => {
                   className="bg-white rounded-xl shadow-sm overflow-hidden group hover:shadow-xl transition-shadow"
                 >
                   <div className="relative">
-                    <Link to={`/product/${item._id}`}>
+                    <div onClick={() => handleProductDetails} className="cursor-pointer">
                       <img
                         src={item.images[0]}
                         alt={item.name}
                         className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
-                    </Link>
+                    </div>
                     <button
                       onClick={() => removeFromWishlist(item._id)}
                       className="absolute top-3 right-3 w-10 h-10 bg-white/90 hover:bg-red-500 text-red-500 hover:text-white rounded-full flex items-center justify-center shadow-lg transition-all"
@@ -221,7 +225,7 @@ const Wishlist = () => {
 
                   <div className="p-4">
                     <Link to={`/product/${item._id}`}>
-                      <h3 className="font-medium text-gray-900 hover:text-blue-600 line-clamp-2">
+                      <h3 className="font-medium text-gray-900  group-hover:opacity-80 transition-all duration-300">
                         {item.name}
                       </h3>
                     </Link>
