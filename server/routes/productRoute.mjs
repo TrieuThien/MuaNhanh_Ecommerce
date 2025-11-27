@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   addProduct,
+  listProductsNoRatings,
   listProducts,
   removeProduct,
   singleProducts,
@@ -42,7 +43,7 @@ router.put(
 );
 router.post(`${routeValue}update-stock`, updateStock);
 router.get(`${routeValue}single/:id`, singleProducts);
-router.get(`${routeValue}list`, listProducts);
+router.get(`${routeValue}list`, listProductsNoRatings);
 router.get(`${routeValue}inventory-stats`, adminAuth, productInventoryStats);
 router.get(`${routeValue}low-stock`, adminAuth, lowStockProducts);
 

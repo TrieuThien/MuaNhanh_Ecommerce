@@ -118,123 +118,123 @@ const addProduct = async (req, res) => {
 };
 
 // List products with filtering
-// const listProducts = async (req, res) => {
-//   try {
-//     const {
-//       _type,
-//       _id,
-//       _search,
-//       brand,
-//       category,
-//       offer,
-//       onSale,
-//       isAvailable,
-//       _page = 1,
-//       _perPage = 25,
-//     } = req.query;
+const listProductsNoRatings = async (req, res) => {
+  try {
+    const {
+      _type,
+      _id,
+      _search,
+      brand,
+      category,
+      offer,
+      onSale,
+      isAvailable,
+      _page = 1,
+      _perPage = 25,
+    } = req.query;
 
-//     // Filter by specific ID
-//     if (_id) {
-//       const dbProduct = await productModel.findById(_id);
-//       if (dbProduct) {
-//         // Format product for frontend compatibility
-//         const formattedProduct = {
-//           ...dbProduct.toObject(),
-//           image:
-//             dbProduct.images && dbProduct.images.length > 0
-//               ? dbProduct.images[0]
-//               : "",
-//         };
-//         return res.json({ success: true, product: formattedProduct });
-//       } else {
-//         return res
-//           .status(404)
-//           .json({ success: false, message: "Product not found" });
-//       }
-//     }
+    // Filter by specific ID
+    if (_id) {
+      const dbProduct = await productModel.findById(_id);
+      if (dbProduct) {
+        // Format product for frontend compatibility
+        const formattedProduct = {
+          ...dbProduct.toObject(),
+          image:
+            dbProduct.images && dbProduct.images.length > 0
+              ? dbProduct.images[0]
+              : "",
+        };
+        return res.json({ success: true, product: formattedProduct });
+      } else {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found" });
+      }
+    }
 
-//     // Build filter object for database query
-//     let filter = {};
+    // Build filter object for database query
+    let filter = {};
 
-//     // Filter by availability (only show available products by default)
-//     // if (isAvailable !== "false") {
-//     //   filter.isAvailable = true;
-//     // }
+    // Filter by availability (only show available products by default)
+    // if (isAvailable !== "false") {
+    //   filter.isAvailable = true;
+    // }
 
-//     // Filter by type
-//     if (_type) {
-//       filter._type = _type;
-//     }
+    // Filter by type
+    if (_type) {
+      filter._type = _type;
+    }
 
-//     // Filter by brand
-//     if (brand) {
-//       filter.brand = brand;
-//     }
+    // Filter by brand
+    if (brand) {
+      filter.brand = brand;
+    }
 
-//     // Filter by category
-//     if (category) {
-//       filter.category = category;
-//     }
+    // Filter by category
+    if (category) {
+      filter.category = category;
+    }
 
-//     // Filter by offer
-//     if (offer === "true") {
-//       filter.offer = true;
-//     }
+    // Filter by offer
+    if (offer === "true") {
+      filter.offer = true;
+    }
 
-//     // Filter by onSale
-//     if (onSale === "true") {
-//       filter.onSale = true;
-//     }
+    // Filter by onSale
+    if (onSale === "true") {
+      filter.onSale = true;
+    }
 
-//     // Search by name or description
-//     if (_search) {
-//       const searchRegex = new RegExp(_search, "i");
-//       filter.$or = [
-//         { name: searchRegex },
-//         { description: searchRegex },
-//         { tags: { $in: [searchRegex] } },
-//       ];
-//     }
+    // Search by name or description
+    if (_search) {
+      const searchRegex = new RegExp(_search, "i");
+      filter.$or = [
+        { name: searchRegex },
+        { description: searchRegex },
+        { tags: { $in: [searchRegex] } },
+      ];
+    }
 
-//     // Get database products
-//     let dbProducts = await productModel.find(filter).sort({ createdAt: -1 });
+    // Get database products
+    let dbProducts = await productModel.find(filter).sort({ createdAt: -1 });
 
-//     // Format database products for frontend compatibility
-//     let formattedDbProducts = dbProducts.map((product) => ({
-//       ...product.toObject(),
-//       image:
-//         product.images && product.images.length > 0 ? product.images[0] : "",
-//     }));
+    // Format database products for frontend compatibility
+    let formattedDbProducts = dbProducts.map((product) => ({
+      ...product.toObject(),
+      image:
+        product.images && product.images.length > 0 ? product.images[0] : "",
+    }));
 
-//     // Apply pagination
-//     const page = parseInt(_page, 10) || 1;
-//     const perPage = parseInt(_perPage, 10) || 25;
-//     const startIndex = (page - 1) * perPage;
-//     const endIndex = page * perPage;
-//     const paginatedProducts = formattedDbProducts.slice(startIndex, endIndex);
+    // Apply pagination
+    const page = parseInt(_page, 10) || 1;
+    const perPage = parseInt(_perPage, 10) || 25;
+    const startIndex = (page - 1) * perPage;
+    const endIndex = page * perPage;
+    const paginatedProducts = formattedDbProducts.slice(startIndex, endIndex);
 
-//     // Return response based on whether pagination is requested
-//     if (_page || _perPage) {
-//       res.json({
-//         success: true,
-//         products: paginatedProducts,
-//         currentPage: page,
-//         perPage,
-//         totalItems: formattedDbProducts.length,
-//         totalPages: Math.ceil(formattedDbProducts.length / perPage),
-//       });
-//     } else {
-//       res.json({
-//         success: true,
-//         products: formattedDbProducts,
-//         total: formattedDbProducts.length,
-//       });
-//     }
-//   } catch (error) {
-//     console.log("List products error:", error);
-//     res.json({ success: false, message: error.message });
-//   }
-// };
+    // Return response based on whether pagination is requested
+    if (_page || _perPage) {
+      res.json({
+        success: true,
+        products: paginatedProducts,
+        currentPage: page,
+        perPage,
+        totalItems: formattedDbProducts.length,
+        totalPages: Math.ceil(formattedDbProducts.length / perPage),
+      });
+    } else {
+      res.json({
+        success: true,
+        products: formattedDbProducts,
+        total: formattedDbProducts.length,
+      });
+    }
+  } catch (error) {
+    console.log("List products error:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 const listProducts = async (req, res) => {
   try {
@@ -428,8 +428,7 @@ const removeProduct = async (req, res) => {
 // Single product
 const singleProducts = async (req, res) => {
   try {
-    console.log("Single product request received with params:", req.params, "and query:", req.query);
-    const productId = req.body._id || req.query._id || req.params.id;
+    const productId = req.body._id || req.query._id || req.params.id; 
 
     if (!productId) {
       return res.status(400).json({
@@ -772,6 +771,7 @@ const lowStockProducts = async (req, res) => {
 
 export {
   addProduct,
+  listProductsNoRatings,
   listProducts,
   removeProduct,
   singleProducts,
