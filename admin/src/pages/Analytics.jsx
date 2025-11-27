@@ -79,6 +79,7 @@ const Analytics = () => {
     totalUsers: 0,
     conversionRate: "0.00%",
     growth: { revenue: 0, orders: 0, users: 0, conversionRate: 0 },
+    calculatedAt: null,
     loading: false,
     error: null,
   });
@@ -106,6 +107,7 @@ const Analytics = () => {
           totalUsers: data.totalUsers || 0,
           conversionRate: data.conversionRate || "0.00%",
           growth: data.growth || {},
+          calculatedAt: data.calculatedAt || null,
           loading: false,
           error: null,
         });
@@ -191,7 +193,6 @@ const Analytics = () => {
     },
   ];
 
-
   return (
     <div className="p-6">
       <div className="mb-8">
@@ -199,8 +200,9 @@ const Analytics = () => {
           Analytics Dashboard
         </h1>
         <p className="text-gray-600">
-          {"Track your business performance and insights (In monthly view)."}
+          {"Track your business performance and insights (In monthly view - compared to the previous month - only applied completed orders)."}
         </p>
+        <p className="text-sm text-gray-500 mt-2">Last calculated at: {stats.calculatedAt ? new Date(stats.calculatedAt).toLocaleString() : "N/A"}</p>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row">
           {/* Month */}
           <div className="w-full sm:w-48">

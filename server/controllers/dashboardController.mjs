@@ -126,7 +126,7 @@ const getDashboardStats = async (req, res) => {
 };
 
 // Get analytics data
-const SUCCESS_STATUSES = ["confirmed", "shipped", "delivered"];
+const SUCCESS_STATUSES = ["delivered"];
 const PAID_PAYMENT_STATUS = ["paid"];
 
 const getAnalyticsByMonth = async (req, res) => {
@@ -137,7 +137,7 @@ const getAnalyticsByMonth = async (req, res) => {
 
     const { month } = req.query; // format: "2025-04"
     if (!month || !/^\d{4}-\d{2}$/.test(month)) {
-      return res.json({ success: false, message: "Tháng không hợp lệ." });
+      return res.json({ success: false, message: "Invalid month format." });
     }
 
     const [year, monthNum] = month.split("-").map(Number);
@@ -148,18 +148,18 @@ const getAnalyticsByMonth = async (req, res) => {
       ? `${year - 1}-12` 
       : `${year}-${String(monthNum - 1).padStart(2, "0")}`;
 
-    // Kiểm tra cache
+    // Check cache 
     const cached = await AnalyticsDashboard.findOne({ monthKey: month });
-    if (cached) {
+    if (cached.calculatedAt && (Date.now() - cached.calculatedAt.getTime() < CACHE_TTL)) {
       return res.json({
         success: true,
         data: cached,
         cached: true,
-        message: `Dữ liệu tháng ${month} (đã lưu trước)`
+        message: `Data for month ${month} (cached)`
       });
     }
 
-    // Tính dữ liệu tháng hiện tại
+    // Calculate current month data
     const currentMonthData = await Promise.all([
       orderModel.aggregate([
         {
@@ -205,7 +205,7 @@ const getAnalyticsByMonth = async (req, res) => {
       conversionRate: totalUsers > 0 ? (uniqueBuyersResult / totalUsers) * 100 : 0
     };
 
-    // Lấy dữ liệu tháng trước để tính tăng/giảm
+    // Get previous month data for growth calculation
     const prevCached = await AnalyticsDashboard.findOne({ monthKey: prevMonth });
     const prev = prevCached ? {
       totalRevenue: prevCached.totalRevenue,
@@ -229,7 +229,7 @@ const getAnalyticsByMonth = async (req, res) => {
       revenue: "0.0", orders: "0.0", users: "0.0", conversionRate: "0.0"
     };
 
-    // Lưu vào DB (chỉ 1 bản ghi mỗi tháng)
+    // Save to DB (only one record per month)
     const analyticsDoc = await AnalyticsDashboard.findOneAndUpdate(
       { monthKey: month },
       {
@@ -248,7 +248,7 @@ const getAnalyticsByMonth = async (req, res) => {
     res.json({
       success: true,
       data: analyticsDoc,
-      message: `Đã tính & lưu dữ liệu tháng ${month}`
+      message: `Calculated & saved data for month ${month}`
     });
 
   } catch (error) {
@@ -286,7 +286,7 @@ const getRevenueDataChart = async (req, res) => {
       { $sort: { _id: 1 } }
     ]);
 
-    // Tạo mảng đầy đủ 30/31 ngày (tránh lỗ hổng ngày không có đơn)
+    // Create a full array of 30/31 days (to avoid gaps on days without orders)
     const daysInMonth = new Date(year, monthNum, 0).getDate();
     const fullData = Array.from({ length: daysInMonth }, (_, i) => {
       const dayStr = `${String(i + 1).padStart(2, "0")}/${String(monthNum).padStart(2, "0")}`;
