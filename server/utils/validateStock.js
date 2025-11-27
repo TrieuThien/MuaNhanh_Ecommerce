@@ -41,7 +41,7 @@ const validateStock = async (items) => {
     if (product.isAvailable === false) {
       return {
         valid: false,
-        message: `"${product.name}" is currently out of stock`,
+        message: `"${product.name}" is currently stopped from selling.`,
       };
     }
 

@@ -157,9 +157,9 @@ const listProducts = async (req, res) => {
     let filter = {};
 
     // Filter by availability (only show available products by default)
-    if (isAvailable !== "false") {
-      filter.isAvailable = true;
-    }
+    // if (isAvailable !== "false") {
+    //   filter.isAvailable = true;
+    // }
 
     // Filter by type
     if (_type) {

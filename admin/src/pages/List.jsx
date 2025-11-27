@@ -540,13 +540,12 @@ const List = ({ token }) => {
                             {product.stock || 0}
                           </div>
                           <div
-                            className={`text-xs ${
-                              product.stock > 0
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
+                            className={`text-xs ${product.isAvailable === false || !product.stock > 0
+                                ? "text-red-600"
+                                : "text-green-600"
+                              }`}
                           >
-                            {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                            {product.isAvailable === false ? "Stop selling" : product.stock > 0 ? "In Stock" : "Out of Stock"}
                           </div>
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -617,17 +616,16 @@ const List = ({ token }) => {
                             Stock: {product.stock || 0}
                           </div>
                           <div
-                            className={`text-xs ${
-                              product.stock > 0
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }`}
+                            className={`text-xs ${product.isAvailable === false || !product.stock > 0
+                                ? "text-red-600"
+                                : "text-green-600"
+                              }`}
                           >
-                            {product.stock > 0 ? "In Stock" : "Out of Stock"}
+                            {product.isAvailable === false ? "Stop selling" : product.stock > 0 ? "In Stock" : "Out of Stock"}
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-2 mt-3">
+                      <div className="flex flex-wrap justify-center gap-2 mt-3">
                         <button
                           onClick={() => openEditModal(product)}
                           className="flex items-center gap-1 px-3 py-1.5 text-sm bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
@@ -886,7 +884,7 @@ const List = ({ token }) => {
                       className="mt-1 w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="true">Available</option>
-                      <option value="false">Out of Stock</option>
+                      <option value="false">Stop selling</option>
                     </select>
                   </div>
 
