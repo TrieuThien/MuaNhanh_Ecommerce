@@ -123,7 +123,24 @@ const createOrder = async (req, res) => {
       });
     }
 
-    // Create new order with properly mapped fields
+    // 1. Prepare items for stock validation 
+    const stockCheckItems = items.map((item) => ({
+      productId: item._id || item.productId,
+      quantity: item.quantity || 1,
+    }));
+
+    // 2. Validate stock for each item
+    const validateStock = (await import("../utils/validateStock.js")).default;
+    const stockValidation = await validateStock(stockCheckItems);
+    if (!stockValidation.valid) {
+      return res.json({
+        success: false,
+        message: stockValidation.message,
+        productName: stockValidation.productName || null,
+      });
+    }
+
+    // 3. Create new order with properly mapped fields
     const newOrder = new orderModel({
       userId,
       items: items.map((item) => ({
@@ -152,7 +169,11 @@ const createOrder = async (req, res) => {
 
     await newOrder.save();
 
-    // Add order to user's orders array
+    // 4. Deduct stock for each item
+    const deductStock = (await import("../utils/deductStock.js")).default;
+    await deductStock(stockCheckItems);
+
+    // 5. Add order to user's orders array
     await userModel.findByIdAndUpdate(userId, {
       $push: { orders: newOrder._id },
     });
