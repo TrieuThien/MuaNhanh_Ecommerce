@@ -15,6 +15,7 @@ const Settings = () => {
           type: "text",
         },
         { label: "Default Currency", value: "USD", type: "select" },
+        { label: "Data refresh time", value: "10", type: "number" },
         { label: "Timezone", value: "UTC-7", type: "select" },
       ],
     },

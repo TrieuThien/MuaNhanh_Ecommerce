@@ -63,7 +63,7 @@ const userLogin = async (req, res) => {
         message: "User logged in successfully",
       });
     } else {
-      res.json({ success: false, message: "Invalid credentials, try again" });
+      res.json({ success: false, message: "Invalid credentials, please login and try again" });
     }
   } catch (error) {
     console.log("User Login Error", error);
@@ -188,7 +188,7 @@ const adminLogin = async (req, res) => {
         message: "Welcome admin",
       });
     } else {
-      res.json({ success: false, message: "Invalid credentials" });
+      res.json({ success: false, message: "Invalid credentials, please login and try again" });
     }
   } catch (error) {
     console.log("Admin Login Error", error);
