@@ -746,10 +746,10 @@ const lowStockProducts = async (req, res) => {
   try {
     const limit = Number(req.query.limit) || 10;
 
-    // Get products with stock > 0 and stock <= threshold
+    // Get products with stock >= 0 and stock <= threshold
     const products = await productModel
       .find({
-        stock: { $gt: 0 },
+        stock: { $gte: 0 },
         $expr: { $lte: ["$stock", "$threshold"] }, // MongoDB expression to compare stock with product's threshold
       })
       .sort({ stock: 1 }) // ít hàng lên trước
