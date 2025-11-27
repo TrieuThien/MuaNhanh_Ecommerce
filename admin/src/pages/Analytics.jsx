@@ -294,9 +294,9 @@ const Analytics = () => {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => `${(value / 1e9).toFixed(1)}tỷ`} />
+                <YAxis tick={{ fontSize: 12 }} tickFormatter={(value) => `${(value).toFixed(1)}$`} />
                 <Tooltip
-                  formatter={(value) => `${value.toLocaleString()}đ`}
+                  formatter={(value) => `${value.toLocaleString()}$`}
                   contentStyle={{ backgroundColor: "#fff", border: "1px solid #e5e7eb", borderRadius: "8px" }}
                 />
                 <Area
