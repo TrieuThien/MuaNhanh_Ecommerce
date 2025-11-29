@@ -1,6 +1,8 @@
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
 import productModel from "../models/productModel.js";
+import { mailAdminsNewOrder, mailOrderConfirmation } from "../utils/mailNotify.js";
+import { skNotifyNewOrder } from "../utils/socketNotify.js";
 
 // Create a new order
 const createOrder = async (req, res) => {
@@ -177,6 +179,11 @@ const createOrder = async (req, res) => {
     await userModel.findByIdAndUpdate(userId, {
       $push: { orders: newOrder._id },
     });
+
+    // 6. Notify admins about the new order (Socket.io)
+    skNotifyNewOrder(newOrder);
+    mailAdminsNewOrder(newOrder);
+    mailOrderConfirmation(newOrder, user);
 
     res.json({
       success: true,

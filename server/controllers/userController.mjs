@@ -4,6 +4,8 @@ import jwt from "jsonwebtoken";
 import userModel from "../models/userModel.js";
 import productModel from "../models/productModel.js";
 import { cloudinary, deleteCloudinaryImage } from "../config/cloudinary.js";
+import { skNotifyNewUser } from "../utils/socketNotify.js";
+import { mailWelcomeNewUser } from "../utils/mailNotify.js";
 import fs from "fs";
 
 // Helper function to clean up temporary files
@@ -134,6 +136,12 @@ const userRegister = async (req, res) => {
 
     const token = createToken(user);
 
+    // Notify admins via socket about new user registration
+    skNotifyNewUser(user);
+
+    // Send welcome email to the new user
+    mailWelcomeNewUser(user);
+    
     res.json({
       success: true,
       token,

@@ -1,5 +1,4 @@
 import express from "express";
-const app = express();
 import "dotenv/config";
 import cors from "cors";
 import { fileURLToPath } from "url";
@@ -7,6 +6,14 @@ import path from "path";
 import { readdirSync } from "fs";
 import dbConnect from "./config/mongodb.js";
 import connectCloudinary from "./config/cloudinary.js";
+import http from "http";
+import { initSocket } from "./socket.js";
+import { Socket } from "socket.io";
+
+
+const app = express();
+const server = http.createServer(app);
+initSocket(server);
 
 const port = process.env.PORT;
 
@@ -74,6 +81,6 @@ app.get("/", (req, res) => {
   res.send("You should not be here");
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on ${port}`);
+server.listen(port, () => {
+  console.log(`Server + Socket.io running on port ${port} for socket.io`);
 });
