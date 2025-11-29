@@ -28,10 +28,10 @@ export const headerNavigation = [
     title: "Contact",
     link: "/contact",
   },
-  // {
-  //   title: "Blog",
-  //   link: "/blog",
-  // },
+  {
+    title: "Blog",
+    link: "/blog",
+  },
   // {
   //   title: "FAQ",
   //   link: "/faq",

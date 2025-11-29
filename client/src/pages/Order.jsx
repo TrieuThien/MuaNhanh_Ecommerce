@@ -6,6 +6,7 @@ import Container from "../components/Container";
 import PriceFormat from "../components/PriceFormat";
 import { addToCart, setOrderCount } from "../redux/orebiSlice";
 import toast from "react-hot-toast";
+import { serverUrl } from "../../config";
 import {
   FaShoppingBag,
   FaMapMarkerAlt,
@@ -50,7 +51,7 @@ const Order = () => {
       setLoading(true);
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8000/api/order/my-orders`,
+        `${serverUrl}/api/order/my-orders`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -128,6 +129,37 @@ const Order = () => {
     });
   };
 
+  const handleCancelOrder = async (order, e) => {
+    e.stopPropagation(); // Prevent modal from opening
+    if (order.status !== "pending") {
+      toast.error("Only pending orders can be cancelled");
+      return;
+    }
+    console.log("Cancelling order:", order._id);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${serverUrl}/api/order/user/cancel/${order._id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Order cancelled successfully");
+        fetchUserOrders(); // Refresh orders after cancellation
+      } else {
+        toast.error(data.message || "Failed to cancel order");
+      }
+    } catch (error) {
+      toast.error("Failed to cancel order");
+    }
+  };
+
   const confirmAddToCart = async () => {
     const order = confirmModal.order;
 
@@ -165,19 +197,15 @@ const Order = () => {
       // Create more descriptive success message
       let message = "";
       if (addedCount > 0 && updatedCount > 0) {
-        message = `${addedCount} new item${
-          addedCount !== 1 ? "s" : ""
-        } added and ${updatedCount} existing item${
-          updatedCount !== 1 ? "s" : ""
-        } updated in cart!`;
+        message = `${addedCount} new item${addedCount !== 1 ? "s" : ""
+          } added and ${updatedCount} existing item${updatedCount !== 1 ? "s" : ""
+          } updated in cart!`;
       } else if (addedCount > 0) {
-        message = `${addedCount} item${
-          addedCount !== 1 ? "s" : ""
-        } added to cart!`;
+        message = `${addedCount} item${addedCount !== 1 ? "s" : ""
+          } added to cart!`;
       } else {
-        message = `${updatedCount} item${
-          updatedCount !== 1 ? "s" : ""
-        } updated in cart!`;
+        message = `${updatedCount} item${updatedCount !== 1 ? "s" : ""
+          } updated in cart!`;
       }
 
       toast.success(message, {
@@ -564,6 +592,16 @@ const Order = () => {
                             >
                               <FaShoppingCart className="w-4 h-4" />
                             </button>
+                            {order.status === "pending" && (
+                              <button
+                                onClick={(e) => handleCancelOrder(order, e)}
+                                className="text-red-600 hover:text-red-900 transition-colors"
+                                title="Cancel Order"
+                              >
+                                <FaTimes className="w-4 h-4" />
+                              </button>
+                            )}
+
                             <Link
                               to={`/checkout/${order._id}`}
                               className="text-gray-600 hover:text-gray-900 transition-colors"
@@ -572,7 +610,7 @@ const Order = () => {
                             >
                               <FaShoppingBag className="w-4 h-4" />
                             </Link>
-                            {order.paymentStatus === "pending" && (
+                            {order.paymentStatus === "pending" && order.status !== "cancelled" && (
                               <Link
                                 to={`/checkout/${order._id}`}
                                 className="text-orange-600 hover:text-orange-900 transition-colors"
@@ -741,9 +779,8 @@ const Order = () => {
                       {selectedOrder.items.map((item, index) => (
                         <div
                           key={index}
-                          className={`p-4 flex items-center space-x-4 ${
-                            index > 0 ? "border-t border-gray-200" : ""
-                          }`}
+                          className={`p-4 flex items-center space-x-4 ${index > 0 ? "border-t border-gray-200" : ""
+                            }`}
                         >
                           <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                             {item.image && (

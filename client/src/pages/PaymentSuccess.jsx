@@ -14,6 +14,8 @@ import {
   FaCalendarAlt,
 } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { serverUrl } from "../../config";
+
 
 const PaymentSuccess = () => {
   const [searchParams] = useSearchParams();
@@ -37,7 +39,7 @@ const PaymentSuccess = () => {
 
         // Confirm payment with backend
         const confirmResponse = await fetch(
-          "http://localhost:8000/api/payment/stripe/confirm-payment",
+          `${serverUrl}/api/payment/stripe/confirm-payment`,
           {
             method: "POST",
             headers: {

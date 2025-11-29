@@ -20,6 +20,8 @@ import {
 } from "react-icons/fa";
 import { MdSend, MdMarkEmailRead, MdReply } from "react-icons/md";
 import toast from "react-hot-toast";
+import { serverUrl } from "../../config";
+
 
 const contactInfo = [
   {
@@ -73,7 +75,7 @@ const Contact = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        "http://localhost:8000/api/contact/my-contacts",
+        `${serverUrl}/api/contact/my-contacts`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -127,7 +129,7 @@ const Contact = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:8000/api/contact", {
+      const response = await fetch(`${serverUrl}/api/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

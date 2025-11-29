@@ -13,6 +13,8 @@ import { MdMarkEmailUnread, MdReply } from "react-icons/md";
 import Container from "../components/Container";
 import SkeletonLoader from "../components/SkeletonLoader";
 import toast from "react-hot-toast";
+import { serverUrl } from "../../config";
+
 
 const statusColors = {
   unread: "bg-red-100 text-red-800 border-red-200",
@@ -59,7 +61,7 @@ const Contacts = () => {
       });
 
       const response = await fetch(
-        `http://localhost:8000/api/contact/admin/all?${queryParams}`,
+        `${serverUrl}/api/contact/admin/all?${queryParams}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,7 +89,7 @@ const Contacts = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8000/api/contact/admin/${contactId}/status`,
+        `${serverUrl}/api/contact/admin/${contactId}/status`,
         {
           method: "PUT",
           headers: {
@@ -121,7 +123,7 @@ const Contacts = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8000/api/contact/admin/${contactId}`,
+        `${serverUrl}/api/contact/admin/${contactId}`,
         {
           method: "DELETE",
           headers: {
@@ -161,7 +163,7 @@ const Contacts = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8000/api/contact/admin/${contactId}`,
+        `${serverUrl}/api/contact/admin/${contactId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

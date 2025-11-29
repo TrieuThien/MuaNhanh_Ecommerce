@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createOrder,
+  cancelOrderByUser,
   getAllOrders,
   getUserOrders,
   getUserOrderById,
@@ -19,6 +20,7 @@ const routeValue = "/api/order/";
 router.post(`${routeValue}create`, userAuth, createOrder);
 router.get(`${routeValue}my-orders`, userAuth, getUserOrders);
 router.get(`${routeValue}user/:orderId`, userAuth, getUserOrderById);
+router.post(`${routeValue}user/cancel/:orderId`, userAuth, cancelOrderByUser);
 
 // Admin routes
 router.get(`${routeValue}admin/user/:userId`, adminAuth, getUserOrders);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getData } from "../../helpers";
-import { config } from "../../../config";
+import { serverUrl } from "../../../config";
 
 const ProductsSideNav = ({ onFilterChange, filters, onClearFilters }) => {
   const [categories, setCategories] = useState([]);
@@ -12,7 +12,7 @@ const ProductsSideNav = ({ onFilterChange, filters, onClearFilters }) => {
     // Fetch categories and brands from products
     const fetchFilterOptions = async () => {
       try {
-        const data = await getData(`${config?.baseUrl}/api/products`);
+        const data = await getData(`${serverUrl}/api/products`);
         const products = data?.products || [];
 
         // Extract unique categories

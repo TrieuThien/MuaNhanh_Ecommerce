@@ -193,6 +193,46 @@ const createOrder = async (req, res) => {
   }
 };
 
+// Cancel order by user when order is still pending
+const cancelOrderByUser = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const userId = req.user.id; // From auth middleware
+
+    const order = await orderModel.findOne({ _id: orderId, userId });
+
+    if (!order) {
+      return res.json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    if (order.status !== "pending") {
+      return res.json({
+        success: false,
+        message: "Only pending orders can be cancelled",
+      });
+    }
+
+    order.status = "cancelled";
+    order.updatedAt = Date.now();
+    await order.save();
+
+    res.json({
+      success: true,
+      message: "Order cancelled successfully",
+      order,
+    });
+  } catch (error) {
+    console.log("Cancel Order Error:", error);
+    res.json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 // Get all orders (Admin)
 const getAllOrders = async (req, res) => {
   try {
@@ -449,6 +489,7 @@ const deleteOrder = async (req, res) => {
 
 export {
   createOrder,
+  cancelOrderByUser,
   getAllOrders,
   getUserOrders,
   getUserOrderById,
