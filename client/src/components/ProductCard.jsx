@@ -168,7 +168,7 @@ const ProductCard = ({ item, viewMode = "grid", className = "" }) => {
       {/* Product Info */}
       <div className="pt-4 pb-4 px-4 text-center">
         <h3
-          className="text-sm font-medium text-gray-900 uppercase tracking-wide mb-2 cursor-pointer hover:text-gray-600 transition-colors duration-200"
+          className="text-sm font-medium min-h-[48px] text-gray-900 uppercase tracking-wide mb-2 cursor-pointer hover:text-gray-600 transition-colors duration-200"
           onClick={handleProductDetails}
         >
           {item?.name}
