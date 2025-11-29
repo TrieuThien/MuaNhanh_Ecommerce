@@ -1,104 +1,132 @@
-import { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Slider from "react-slick";
-import {
-  bannerImgOne,
-  bannerImgTwo,
-  bannerImgThree,
-} from "../assets/images/index";
 import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import Container from "./Container";
 import PriceFormat from "./PriceFormat";
 import { motion } from "framer-motion";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
+import { serverUrl } from "../../config.js";
 
-const bannerData = [
+// Fallback banner beautiful (when server error or not loaded yet)
+const FALLBACK_BANNERS = [
   {
-    title: "Organic Fruits & Veggies",
-    subtitle: "Fresh deals on produce",
-    description: "Handpicked fresh produce delivered to your doorstep",
-    discount: "Free delivery over $50",
+    _id: "fb1",
+    title: "Welcome to FreshMart",
+    subtitle: "Fresh & Organic Every Day",
+    description: "Handpicked groceries delivered straight to your door",
+    discount: "Up to 50% OFF",
     from: 9.99,
-    sale: "Limited Time Offer",
-    image: bannerImgOne, // đặt tên biến ảnh tương ứng
-    buttonText: "Shop Fresh"
+    sale: "Weekend Sale",
+    buttonText: "Shop Now",
+    image: "https://images.unsplash.com/photo-1542838132-92c5338b0c38?w=1600&h=900&fit=crop",
   },
   {
-    title: "Kitchen Essentials",
-    subtitle: "Hot deals on kitchenware",
-    description: "Upgrade your kitchen with our premium selection",
-    discount: "Up to 30% off",
-    from: 29.99,
-    sale: "Special Offer",
-    image: bannerImgTwo, // đặt tên biến ảnh tương ứng
-    buttonText: "Shop Kitchen"
+    _id: "fb2",
+    title: "Super Saving Week",
+    subtitle: "Limited Time Only",
+    description: "Don't miss out on exclusive deals this week!",
+    discount: "Free Delivery",
+    from: 0,
+    sale: "Hot Deal",
+    buttonText: "Grab Now",
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&h=900&fit=crop",
   },
-  {
-    title: "Refreshing Beverages",
-    subtitle: "Weekend specials on drinks",
-    description: "Cool drinks for your weekend relaxation",
-    discount: "Buy 2 Get 1 Free",
-    from: 2.49,
-    sale: "Limited Offer",
-    image: bannerImgThree, // đặt tên biến ảnh tương ứng
-    buttonText: "Shop Drinks"
-  }
-
 ];
 
 const Banner = () => {
   const navigate = useNavigate();
-  const [dotActive, setDocActive] = useState(0);
+  const [dotActive, setDotActive] = useState(0); 
   const [isHovered, setIsHovered] = useState(false);
+  const [bannerData, setBannerData] = useState(FALLBACK_BANNERS);
   const sliderRef = useRef(null);
-  const settings = {
-    dots: true,
-    infinite: true,
-    autoplay: true,
-    autoplaySpeed: 4000,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    arrows: false,
-    fade: true,
-    cssEase: "linear",
-    beforeChange: (prev, next) => {
-      setDocActive(next);
-    },
-    appendDots: (dots) => (
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <ul className="flex items-center gap-3">{dots}</ul>
-      </div>
-    ),
-    customPaging: (i) => (
-      <div
-        className={`cursor-pointer transition-all duration-300 ${i === dotActive
-            ? "w-8 h-2 bg-gray-800 rounded-full"
-            : "w-2 h-2 bg-gray-600/50 rounded-full hover:bg-gray-600/75"
+
+  // Chỉ fetch 1 lần duy nhất
+  const hasFetched = useRef(false);
+
+  useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    const fetchBannerData = async () => {
+      try {
+        const res = await fetch(`${serverUrl}/api/banners/active`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch banners");
+
+        const result = await res.json();
+        const banners = Array.isArray(result) ? result : result.data || [];
+
+        const activeBanners = banners.filter(b => b.isActive);
+        if (activeBanners.length > 0) {
+          setBannerData(activeBanners);
+        }
+      } catch (err) {
+        console.warn("Using fallback banners:", err.message);
+        // Keep FALLBACK_BANNERS
+      }
+    };
+
+    fetchBannerData();
+  }, []);
+
+  // UseMemo to optimize settings object
+  const settings = useMemo(
+    () => ({
+      dots: true,
+      infinite: true,
+      autoplay: true,
+      autoplaySpeed: 4000,
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      arrows: false,
+      fade: true,
+      cssEase: "linear",
+      beforeChange: (prev, next) => setDotActive(next),
+      appendDots: (dots) => (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+          <ul className="flex items-center gap-3">{dots}</ul>
+        </div>
+      ),
+      customPaging: (i) => (
+        <div
+          className={`cursor-pointer transition-all duration-300 ${
+            i === dotActive
+              ? "w-8 h-2 bg-gray-800 rounded-full"
+              : "w-2 h-2 bg-gray-600/50 rounded-full hover:bg-gray-600/75"
           }`}
-      />
-    ),
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          fade: false,
-          appendDots: (dots) => (
-            <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
-              <ul className="flex items-center gap-2">{dots}</ul>
-            </div>
-          ),
-          customPaging: (i) => (
-            <div
-              className={`cursor-pointer transition-all duration-300 ${i === dotActive
-                  ? "w-6 h-1.5 bg-gray-800 rounded-full"
-                  : "w-1.5 h-1.5 bg-gray-600/50 rounded-full hover:bg-gray-600/75"
+        />
+      ),
+      responsive: [
+        {
+          breakpoint: 768,
+          settings: {
+            fade: false,
+            appendDots: (dots) => (
+              <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2">
+                <ul className="flex items-center gap-2">{dots}</ul>
+              </div>
+            ),
+            customPaging: (i) => (
+              <div
+                className={`cursor-pointer transition-all duration-300 ${
+                  i === dotActive
+                    ? "w-6 h-1.5 bg-gray-800 rounded-full"
+                    : "w-1.5 h-1.5 bg-gray-600/50 rounded-full hover:bg-gray-600/75"
                 }`}
-            />
-          ),
+              />
+            ),
+          },
         },
-      },
-    ],
-  };
+      ],
+    }),
+    [dotActive]
+  );
+
   return (
     <div
       className="w-full h-[70vh] min-h-[500px] max-h-[700px] relative overflow-hidden group bg-white"
@@ -106,9 +134,9 @@ const Banner = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       <Slider ref={sliderRef} {...settings}>
-        {bannerData?.map((item, index) => (
+        {bannerData.map((item, index) => (
           <div
-            key={index}
+            key={item._id || index}
             className="relative h-[70vh] min-h-[500px] max-h-[700px]"
           >
             <div className="relative z-10 h-full bg-[#F3F3F3]">
@@ -123,112 +151,66 @@ const Banner = () => {
 
               <Container className="h-full relative z-10 py-8 md:py-0">
                 <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 lg:gap-5 h-full lg:items-center">
-                  {/* Left Content */}
+                  {/* LEFT CONTENT */}
                   <motion.div
                     initial={{ opacity: 0, x: -60 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="space-y-4 lg:space-y-5 text-gray-800 order-2 lg:order-1 text-center lg:text-left"
                   >
-                    {/* Sale Badge */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.2 }}
-                      className="inline-block"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="inline-block">
                       <span className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-red-500 text-white text-sm font-bold uppercase tracking-wider rounded-full shadow-lg">
                         <span className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></span>
-                        {item?.sale}
+                        {item.sale || "Hot Deal"}
                       </span>
                     </motion.div>
 
-                    {/* Main Title */}
                     <motion.h1
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.7, delay: 0.3 }}
-                      className="text-1xl sm:text-3xl md:text-5xl font-black leading-tight lg:leading-none bg-gradient-to-r from-gray-800 via-gray-900 to-black bg-clip-text text-transparent py-2"
+                      className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight lg:leading-none bg-gradient-to-r from-gray-800 via-gray-900 to-black bg-clip-text text-transparent"
                     >
-                      {item?.title}
+                      {item.title}
                     </motion.h1>
 
-                    {/* Subtitle */}
-                    <motion.p
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.4 }}
-                      className="text-lg sm:text-xl text-gray-600 font-medium leading-relaxed"
-                    >
-                      {item?.subtitle}
+                    <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="text-lg sm:text-xl text-gray-600 font-medium leading-relaxed">
+                      {item.subtitle}
                     </motion.p>
 
-                    {/* Description */}
-                    <motion.p
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.5 }}
-                      className="text-base sm:text-lg md:text-xl text-gray-500 leading-relaxed max-w-2xl mx-auto lg:mx-0"
-                    >
-                      {item?.description}
+                    <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} className="text-base sm:text-lg md:text-xl text-gray-500 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+                      {item.description}
                     </motion.p>
 
-                    {/* Discount & Price */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.6 }}
-                      className="flex flex-col sm:flex-row sm:items-center justify-center lg:justify-start gap-4 lg:gap-6 py-2 lg:py-4"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} className="flex flex-col sm:flex-row sm:items-center justify-center lg:justify-start gap-4 lg:gap-6 py-2 lg:py-4">
                       <div className="flex items-center justify-center lg:justify-start">
-                        <div className="text-1xl sm:text-2xl md:text-3xl font-black text-transparent bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text">
-                          {item?.discount}
+                        <div className="text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text">
+                          {item.discount}
                         </div>
                       </div>
-                      <div className="flex items-center justify-center lg:justify-start gap-3">
-                        <span className="text-base sm:text-lg text-gray-600 font-medium">
-                          Starting from
-                        </span>
-                        <PriceFormat
-                          amount={item?.from}
-                          className="text-1xl sm:text-2xl md:text-3xl font-bold text-gray-800"
-                        />
-                      </div>
+                      {item.from && (
+                        <div className="flex items-center justify-center lg:justify-start gap-3">
+                          <span className="text-base sm:text-lg text-gray-600 font-medium">Starting from</span>
+                          <PriceFormat amount={item.from} className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800" />
+                        </div>
+                      )}
                     </motion.div>
 
-                    {/* CTA Button */}
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.7 }}
-                      className="pt-2 lg:pt-4 flex justify-center lg:justify-start"
-                    >
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.7 }} className="pt-2 lg:pt-4 flex justify-center lg:justify-start">
                       <button
                         onClick={() => navigate("/shop")}
                         className="group relative inline-flex items-center gap-3 lg:gap-4 px-8 lg:px-10 py-4 lg:py-5 bg-black text-white text-sm lg:text-base font-bold uppercase tracking-wider overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
                       >
                         <span className="absolute inset-0 bg-gradient-to-r from-gray-800 to-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                        <span className="relative z-10 group-hover:text-white transition-colors duration-300">
-                          {item?.buttonText}
-                        </span>
-                        <svg
-                          className="relative z-10 w-4 lg:w-5 h-4 lg:h-5 transition-all duration-300 group-hover:translate-x-2 group-hover:text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                          />
+                        <span className="relative z-10">{item.buttonText || "Shop Fresh"}</span>
+                        <svg className="relative z-10 w-4 lg:w-5 h-4 lg:h-5 transition-all duration-300 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                         </svg>
                       </button>
                     </motion.div>
                   </motion.div>
 
-                  {/* Right Image */}
+                  {/* RIGHT IMAGE  */}
                   <motion.div
                     initial={{ opacity: 0, x: 60, scale: 0.8 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
@@ -236,19 +218,14 @@ const Banner = () => {
                     className="relative order-1 lg:order-2 h-64 sm:h-80 lg:h-full flex items-center justify-center"
                   >
                     <div className="relative max-w-xs sm:max-w-sm lg:max-w-lg w-full">
-                      {/* Glowing Background */}
                       <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl blur-3xl transform rotate-6"></div>
-
-                      {/* Image Container */}
                       <div className="relative bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm rounded-3xl p-4 sm:p-6 lg:p-8 border border-gray-200/30">
                         <img
-                          src={item?.image}
-                          alt={`Banner ${index + 1}`}
+                          src={item.image}
+                          alt={item.title}
                           className="w-full h-auto max-h-48 sm:max-h-64 lg:max-h-[450px] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
                         />
                       </div>
-
-                      {/* Floating Elements */}
                       <div className="absolute -top-2 -right-2 lg:-top-4 lg:-right-4 w-12 h-12 lg:w-20 lg:h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full opacity-10 animate-pulse"></div>
                       <div className="absolute -bottom-3 -left-3 lg:-bottom-6 lg:-left-6 w-10 h-10 lg:w-16 lg:h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full opacity-10 animate-pulse delay-1000"></div>
                     </div>
@@ -261,28 +238,14 @@ const Banner = () => {
       </Slider>
 
       {/* Navigation Arrows */}
-      <div
-        className={`absolute inset-y-0 left-0 flex items-center z-20 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
-          }`}
-      >
-        <button
-          onClick={() => sliderRef.current?.slickPrev()}
-          className="ml-4 p-3 bg-gray-800/80 backdrop-blur-sm text-white hover:bg-gray-900 transition-all duration-200 rounded-full group shadow-lg"
-          aria-label="Previous slide"
-        >
+      <div className={`absolute inset-y-0 left-0 flex items-center z-20 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}>
+        <button onClick={() => sliderRef.current?.slickPrev()} className="ml-4 p-3 bg-gray-800/80 backdrop-blur-sm text-white hover:bg-gray-900 transition-all duration-200 rounded-full group shadow-lg">
           <HiChevronLeft className="w-6 h-6 transition-transform duration-200 group-hover:scale-110" />
         </button>
       </div>
 
-      <div
-        className={`absolute inset-y-0 right-0 flex items-center z-20 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
-          }`}
-      >
-        <button
-          onClick={() => sliderRef.current?.slickNext()}
-          className="mr-4 p-3 bg-gray-800/80 backdrop-blur-sm text-white hover:bg-gray-900 transition-all duration-200 rounded-full group shadow-lg"
-          aria-label="Next slide"
-        >
+      <div className={`absolute inset-y-0 right-0 flex items-center z-20 transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"}`}>
+        <button onClick={() => sliderRef.current?.slickNext()} className="mr-4 p-3 bg-gray-800/80 backdrop-blur-sm text-white hover:bg-gray-900 transition-all duration-200 rounded-full group shadow-lg">
           <HiChevronRight className="w-6 h-6 transition-transform duration-200 group-hover:scale-110" />
         </button>
       </div>
