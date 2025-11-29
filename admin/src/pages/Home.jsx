@@ -139,7 +139,7 @@ const Home = () => {
 
   if (stats.error) {
     return (
-      <div className="space-y-8">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6 space-y-8">
         <div>
           <Title>Dashboard Overview</Title>
           <p className="text-gray-600 mt-2">
@@ -179,7 +179,7 @@ const Home = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6 space-y-8">
       {/* Header */}
       <div>
         <Title>Dashboard Overview</Title>
