@@ -15,6 +15,7 @@ import { IoMdClose, IoMdCloudUpload } from "react-icons/io";
 import { Link } from "react-router-dom";
 import PriceFormat from "../components/PriceFormat";
 import Container from "../components/Container";
+import TagsInput from "../components/TagsInput";
 import PropTypes from "prop-types";
 import Input, { Label } from "../components/ui/input";
 import SmallLoader from "../components/SmallLoader";
@@ -50,6 +51,8 @@ const List = ({ token }) => {
     badge: false,
     tags: [],
   });
+
+  const [inputValue, setInputValue] = useState("");
 
   const [imageFiles, setImageFiles] = useState({
     image1: null,
@@ -541,8 +544,8 @@ const List = ({ token }) => {
                           </div>
                           <div
                             className={`text-xs ${product.isAvailable === false || !product.stock > 0
-                                ? "text-red-600"
-                                : "text-green-600"
+                              ? "text-red-600"
+                              : "text-green-600"
                               }`}
                           >
                             {product.isAvailable === false ? "Stop selling" : product.stock > 0 ? "In Stock" : "Out of Stock"}
@@ -617,8 +620,8 @@ const List = ({ token }) => {
                           </div>
                           <div
                             className={`text-xs ${product.isAvailable === false || !product.stock > 0
-                                ? "text-red-600"
-                                : "text-green-600"
+                              ? "text-red-600"
+                              : "text-green-600"
                               }`}
                           >
                             {product.isAvailable === false ? "Stop selling" : product.stock > 0 ? "In Stock" : "Out of Stock"}
@@ -918,46 +921,18 @@ const List = ({ token }) => {
                 {/* Tags */}
                 <div>
                   <Label>Tags</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-2">
-                    {[
-                      "Fashion",
-                      "Electronics",
-                      "Sports",
-                      "Accessories",
-                      "Others",
-                    ].map((tag) => (
-                      <div className="flex items-center space-x-2" key={tag}>
-                        <input
-                          id={`edit-${tag.toLowerCase()}`}
-                          type="checkbox"
-                          value={tag}
-                          checked={formData.tags.includes(tag)}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData((prevData) => ({
-                                ...prevData,
-                                tags: [...prevData.tags, tag],
-                              }));
-                            } else {
-                              setFormData((prevData) => ({
-                                ...prevData,
-                                tags: prevData.tags.filter((t) => t !== tag),
-                              }));
-                            }
-                          }}
-                        />
-                        <label
-                          htmlFor={`edit-${tag.toLowerCase()}`}
-                          className="text-sm text-gray-700 cursor-pointer"
-                        >
-                          {tag}
-                        </label>
-                      </div>
-                    ))}
+                  <div className="mt-2">
+                    <TagsInput
+                      tags={formData.tags}
+                      setTags={(newTags) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          tags: newTags,
+                        }))
+                      }
+                    />
                   </div>
                 </div>
-
                 <div className="flex gap-3 pt-4 border-t">
                   <button
                     type="button"

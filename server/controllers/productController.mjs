@@ -733,7 +733,7 @@ const productInventoryStats = async (req, res) => {
     console.error("Product Inventory Stats Error:", error);
     return res.json({
       success: false,
-      message: "Lỗi khi lấy thống kê tồn kho",
+      message: "Error retrieving inventory statistics",
       error: error.message,
     });
   }
@@ -752,7 +752,7 @@ const lowStockProducts = async (req, res) => {
         stock: { $gte: 0 },
         $expr: { $lte: ["$stock", "$threshold"] }, // MongoDB expression to compare stock with product's threshold
       })
-      .sort({ stock: 1 }) // ít hàng lên trước
+      .sort({ stock: 1 }) // Prioritize lowest stock first
       .limit(limit);
 
     return res.json({

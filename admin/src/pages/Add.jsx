@@ -9,6 +9,8 @@ import { serverUrl } from "../../config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import SmallLoader from "../components/SmallLoader";
+import TagsInput from "../components/TagsInput";
+
 
 const Add = ({ token }) => {
   const [isLoading, setLoading] = useState(false);
@@ -390,7 +392,7 @@ const Add = ({ token }) => {
                     required
                   />
                 </div>
-                
+
                 <div className="flex flex-col">
                   <Label htmlFor="threshold">Threshold</Label>
                   <Input
@@ -479,45 +481,17 @@ const Add = ({ token }) => {
 
             {/* Tags */}
             <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Tags</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
-                {[
-                  "Fashion",
-                  "Electronics",
-                  "Sports",
-                  "Accessories",
-                  "Others",
-                ].map((tag) => (
-                  <div className="flex items-center space-x-2" key={tag}>
-                    <input
-                      id={tag.toLowerCase()}
-                      type="checkbox"
-                      name="tags"
-                      value={tag}
-                      checked={formData.tags.includes(tag)}
-                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setFormData((prevData) => ({
-                            ...prevData,
-                            tags: [...prevData.tags, tag],
-                          }));
-                        } else {
-                          setFormData((prevData) => ({
-                            ...prevData,
-                            tags: prevData.tags.filter((t) => t !== tag),
-                          }));
-                        }
-                      }}
-                    />
-                    <label
-                      htmlFor={tag.toLowerCase()}
-                      className="text-sm text-gray-700 cursor-pointer"
-                    >
-                      {tag}
-                    </label>
-                  </div>
-                ))}
+              <Label>Tags</Label>
+              <div className="mt-2">
+                <TagsInput
+                  tags={formData.tags}
+                  setTags={(newTags) =>
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      tags: newTags,
+                    }))
+                  }
+                />
               </div>
             </div>
 

@@ -34,7 +34,7 @@ const userAuth = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: "Invalid token" });
+    res.json({ success: false, message: "Invalid token, please log in again" });
   }
 };
 
