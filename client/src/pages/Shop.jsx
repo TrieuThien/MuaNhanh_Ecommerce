@@ -83,6 +83,18 @@ const Shop = () => {
       );
     }
 
+    if (filters.minRating) {
+      filtered = filtered.filter(
+        (product) =>
+          (product.averageRating || 0) >= Number(filters.minRating)
+      );
+    }
+    if (filters.minPrice && filters.maxPrice) {
+      filtered = filtered.filter(
+        (product) => product.price >= Number(filters.minPrice) && product.price <= Number(filters.maxPrice)
+      );
+    }
+  
     // Apply sorting
     switch (sortBy) {
       case "price-low":
@@ -301,7 +313,7 @@ const Shop = () => {
             </div>
 
             {/* Active Filters */}
-            {(filters.category || filters.brand || filters.search) && (
+            {(filters.category || filters.brand || filters.search || filters.minPrice || filters.maxPrice || filters.minRating) && (
               <div className="flex flex-wrap items-center gap-2 mb-6">
                 <span className="text-sm text-gray-600">Active filters:</span>
                 {filters.category && (
@@ -331,6 +343,28 @@ const Shop = () => {
                     Search: {filters.search}
                     <button
                       onClick={() => handleFilterChange({ search: "" })}
+                      className="ml-1 hover:text-gray-300"
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+                {(filters.minPrice || filters.maxPrice) && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-900 text-white text-sm rounded-full">
+                    Price: ${filters?.minPrice || 0} - ${filters?.maxPrice || 0}
+                    <button
+                      onClick={() => handleFilterChange({ minPrice: "", maxPrice: "" })}
+                      className="ml-1 hover:text-gray-300"
+                    >
+                      ×
+                    </button>
+                  </span>
+                )}
+                {filters.minRating && (
+                  <span className="inline-flex items-center gap-1 px-3 py-1 bg-gray-900 text-white text-sm rounded-full">
+                    Rating: {filters.minRating} & up
+                    <button
+                      onClick={() => handleFilterChange({ minRating: "" })}
                       className="ml-1 hover:text-gray-300"
                     >
                       ×

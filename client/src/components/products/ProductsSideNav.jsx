@@ -7,6 +7,7 @@ const ProductsSideNav = ({ onFilterChange, filters, onClearFilters }) => {
   const [brands, setBrands] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [priceRange, setPriceRange] = useState({ min: "", max: "" });
+  const [minRating, setMinRating] = useState("");
 
   useEffect(() => {
     // Fetch categories and brands from products
@@ -52,7 +53,16 @@ const ProductsSideNav = ({ onFilterChange, filters, onClearFilters }) => {
 
   const handlePriceChange = (min, max) => {
     setPriceRange({ min, max });
-    onFilterChange({ priceRange: `${min}-${max}` });
+    onFilterChange({
+      minPrice: min || "",
+      maxPrice: max || ""
+    });
+  };
+
+  const handleRatingChange = (rating) => {
+    const newRating = minRating === rating ? "" : rating;
+    setMinRating(newRating);
+    onFilterChange({ minRating: newRating });
   };
 
   return (
@@ -211,6 +221,8 @@ const ProductsSideNav = ({ onFilterChange, filters, onClearFilters }) => {
             >
               <input
                 type="checkbox"
+                checked={minRating == rating}
+                onChange={() => handleRatingChange(rating)}
                 className="w-4 h-4 text-gray-900 border-gray-300 rounded focus:ring-gray-900 focus:ring-2"
               />
               <div className="ml-3 flex items-center">
@@ -218,9 +230,8 @@ const ProductsSideNav = ({ onFilterChange, filters, onClearFilters }) => {
                   {[...Array(5)].map((_, i) => (
                     <svg
                       key={i}
-                      className={`w-4 h-4 ${
-                        i < rating ? "text-yellow-400" : "text-gray-300"
-                      }`}
+                      className={`w-4 h-4 ${i < rating ? "text-yellow-400" : "text-gray-300"
+                        }`}
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -228,7 +239,9 @@ const ProductsSideNav = ({ onFilterChange, filters, onClearFilters }) => {
                     </svg>
                   ))}
                 </div>
-                <span className="ml-2 text-sm text-gray-600">& up</span>
+                {rating !== 5 && (
+                  <span className="ml-2 text-sm text-gray-600">& up</span>
+                )}
               </div>
             </label>
           ))}

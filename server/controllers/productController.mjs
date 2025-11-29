@@ -249,6 +249,9 @@ const listProducts = async (req, res) => {
       isAvailable,
       _page = 1,
       _perPage = 25,
+      minPrice,
+      maxPrice,
+      minRating,
     } = req.query;
 
     // === TRƯỜNG HỢP TÌM THEO ID ===
@@ -278,7 +281,7 @@ const listProducts = async (req, res) => {
       return res.json({ success: true, product: formattedProduct });
     }
 
-    // === XÂY DỰNG BỘ LỌC ===
+    // === FILTER ===
     let filter = {};
 
     if (_type) filter._type = _type;
@@ -286,8 +289,15 @@ const listProducts = async (req, res) => {
     if (category) filter.category = category;
     if (offer === "true") filter.offer = true;
     if (onSale === "true") filter.onSale = true;
-
-    // Tìm kiếm tên, mô tả, tags
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      filter.price = {};
+      if (minPrice) filter.price.$gte = Number(minPrice);
+      if (maxPrice) filter.price.$lte = Number(maxPrice);
+    }
+    if (minRating) {
+      filter.averageRating = { $gte: Number(minRating) };
+    }
+    // Serch by name, description, or tags
     if (_search) {
       const searchRegex = new RegExp(_search.trim(), "i");
       filter.$or = [
@@ -297,16 +307,16 @@ const listProducts = async (req, res) => {
       ];
     }
 
-    // === LẤY SẢN PHẨM + TÍNH RATING TRONG MỘT LẦN QUERY (TỐI ƯU NHẤT) ===
+    // === Get products + calculate rating in one time ===
     const page = parseInt(_page, 10) || 1;
     const perPage = parseInt(_perPage, 10) || 25;
     const skip = (page - 1) * perPage;
 
-    // Dùng aggregation để tính rating ngay trong MongoDB → cực nhanh!
+    // Use aggregation to calculate rating directly in MongoDB → very fast!
     const products = await productModel.aggregate([
       { $match: filter },
 
-      // Tính averageRating và totalReviews
+      // Calculate averageRating and totalReviews
       {
         $addFields: {
           totalReviews: { $size: { $ifNull: ["$reviews", []] } },
@@ -330,12 +340,12 @@ const listProducts = async (req, res) => {
         }
       },
 
-      // Sắp xếp + phân trang
+      // Sort + paginate
       { $sort: { createdAt: -1 } },
       { $skip: skip },
       { $limit: perPage },
 
-      // Format lại dữ liệu trả về
+      // Format returned data
       {
         $project: {
           _id: 1,
@@ -357,12 +367,12 @@ const listProducts = async (req, res) => {
       }
     ]);
 
-    // Đếm tổng số sản phẩm (cho phân trang)
+    // Count total products (for pagination)
     const totalItems = await productModel.countDocuments(filter);
 
     const totalPages = Math.ceil(totalItems / perPage);
 
-    // === TRẢ VỀ KẾT QUẢ ===
+    // === RETURN RESULTS ===
     return res.json({
       success: true,
       products,
@@ -428,7 +438,7 @@ const removeProduct = async (req, res) => {
 // Single product
 const singleProducts = async (req, res) => {
   try {
-    const productId = req.body._id || req.query._id || req.params.id; 
+    const productId = req.body._id || req.query._id || req.params.id;
 
     if (!productId) {
       return res.status(400).json({
