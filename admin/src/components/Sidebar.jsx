@@ -157,6 +157,28 @@ const Sidebar = () => {
       ],
     },
     {
+      title: "Banner",
+      icon: <FaBook />,
+      path: "#",
+      description: "Manage custom banners",
+      badge: null,
+      isCategory: true,
+      children: [
+        {
+          title: "Add Banner",
+          icon: <IoMdAdd />,
+          path: "/banner/add",
+          description: "Add new banners",
+        },
+        {
+          title: "Banner List",
+          icon: <FaList />,
+          path: "/banner/list",
+          description: "Manage all banners",
+        },
+      ],
+    },
+    {
       title: "Orders",
       icon: <HiOutlineClipboardList />,
       path: "/orders",
@@ -177,7 +199,7 @@ const Sidebar = () => {
       badge: null,
     },
     {
-      title: "Invoice", 
+      title: "Invoice",
       icon: <FaFileInvoice />,
       path: "/invoice",
       description: "Generate & manage invoices",
@@ -207,9 +229,8 @@ const Sidebar = () => {
             </span>
           </button>
           <div
-            className={`ml-3 lg:ml-4 space-y-1 transition-all duration-300 overflow-hidden ${
-              isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-            }`}
+            className={`ml-3 lg:ml-4 space-y-1 transition-all duration-300 overflow-hidden ${isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+              }`}
           >
             {item.children?.map((child) => renderNavItem(child, true))}
           </div>
@@ -222,19 +243,17 @@ const Sidebar = () => {
         key={item.title}
         to={item.path}
         className={({ isActive }) =>
-          `flex items-center justify-between gap-2 lg:gap-3 px-2 lg:px-3 py-2 lg:py-2.5 mx-1 lg:mx-2 rounded-lg transition-all duration-200 group ${
-            isActive
-              ? "bg-gradient-to-r from-black to-gray-800 text-white shadow-lg"
-              : "text-gray-700 hover:bg-gray-50 hover:text-black"
+          `flex items-center justify-between gap-2 lg:gap-3 px-2 lg:px-3 py-2 lg:py-2.5 mx-1 lg:mx-2 rounded-lg transition-all duration-200 group ${isActive
+            ? "bg-gradient-to-r from-black to-gray-800 text-white shadow-lg"
+            : "text-gray-700 hover:bg-gray-50 hover:text-black"
           } ${isChild ? "text-sm" : ""}`
         }
         title={item.description}
       >
         <div className="flex items-center gap-2 lg:gap-3 min-w-0 flex-1">
           <span
-            className={`${
-              isChild ? "text-sm lg:text-base" : "text-base lg:text-lg"
-            } transition-transform group-hover:scale-110 flex-shrink-0`}
+            className={`${isChild ? "text-sm lg:text-base" : "text-base lg:text-lg"
+              } transition-transform group-hover:scale-110 flex-shrink-0`}
           >
             {item.icon}
           </span>
