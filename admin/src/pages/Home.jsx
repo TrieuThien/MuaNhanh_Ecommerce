@@ -71,9 +71,8 @@ const Home = () => {
           <p className="text-3xl font-bold text-gray-800">{value}</p>
           {change && (
             <div
-              className={`flex items-center mt-2 text-sm ${
-                changeType === "positive" ? "text-green-600" : "text-red-600"
-              }`}
+              className={`flex items-center mt-2 text-sm ${changeType === "positive" ? "text-green-600" : "text-red-600"
+                }`}
             >
               <svg
                 className="w-4 h-4 mr-1"
@@ -124,14 +123,14 @@ const Home = () => {
   };
 
   function formatDateTime(dateString) {
-  const date = new Date(dateString);
+    const date = new Date(dateString);
 
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  const seconds = String(date.getSeconds()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
 
-  return `${hours}:${minutes}:${seconds}`;
-}
+    return `${hours}:${minutes}:${seconds}`;
+  }
 
   if (stats.loading) {
     return <SkeletonLoader type="dashboard" />;
@@ -143,7 +142,7 @@ const Home = () => {
         <div>
           <Title>Dashboard Overview</Title>
           <p className="text-gray-600 mt-2">
-           {"Welcome back! Here's what's happening with your store today (compared to yesterday)."}
+            {"Welcome back! Here's what's happening with your store today (compared to yesterday)."}
           </p>
         </div>
 
@@ -181,14 +180,20 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6 space-y-8">
       {/* Header */}
-      <div>
-        <Title>Dashboard Overview</Title>
-        <p className="text-gray-600 mt-2">
-          {`Welcome back! Here's what's happening with your store today (compared to yesterday).`}
-        </p>
-        <p className="text-sm text-gray-500 mt-1">
-          Updated at: {stats.cachedAt ? formatDateTime(stats.cachedAt) + " - " + formatDate(stats.cachedAt) : 'N/A'}
-          </p>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Dashboard Overview
+            </Title>
+            <p className="text-gray-600">
+              {`Welcome back! Here's what's happening with your store today (compared to yesterday).`}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Updated at: {stats.cachedAt ? formatDateTime(stats.cachedAt) + " - " + formatDate(stats.cachedAt) : 'N/A'}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Statistics Cards */}
@@ -242,7 +247,7 @@ const Home = () => {
         <StatCard
           title="Total Users"
           value={stats.totalUsers.toLocaleString()}
-          change={stats.growth.users > 0 ? `+${stats.growth.users}%` : `${stats.growth.users}%`}  
+          change={stats.growth.users > 0 ? `+${stats.growth.users}%` : `${stats.growth.users}%`}
           changeType={stats.growth.users > 0 ? "positive" : "negative"}
           color="bg-purple-100"
           icon={
@@ -324,13 +329,12 @@ const Home = () => {
                       {formatCurrency(order.amount || 0)}
                     </p>
                     <span
-                      className={`inline-block px-2 py-1 text-xs rounded-full ${
-                        order.status === "delivered"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "shipped"
+                      className={`inline-block px-2 py-1 text-xs rounded-full ${order.status === "delivered"
+                        ? "bg-green-100 text-green-800"
+                        : order.status === "shipped"
                           ? "bg-blue-100 text-blue-800"
                           : "bg-yellow-100 text-yellow-800"
-                      }`}
+                        }`}
                     >
                       {order.status || "pending"}
                     </span>
@@ -351,7 +355,7 @@ const Home = () => {
             </h3>
             <Link
               to="/list"
-            className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium">
               View All
             </Link>
           </div>

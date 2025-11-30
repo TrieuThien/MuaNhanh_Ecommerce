@@ -20,6 +20,8 @@ import Contacts from "./pages/Contacts";
 import Settings from "./pages/Settings";
 import AddBanner from "./pages/AddBanner";
 import BannerList from "./pages/BannerList";
+import BlogForm from "./pages/BlogForm";
+import BlogList from "./pages/BlogList";
 
 function App() {
   const { token } = useSelector((state) => state.auth);
@@ -52,8 +54,11 @@ function App() {
                       <Route path="/inventory" element={<Inventory />} />
                       <Route path="/categories" element={<Categories />} />
                       <Route path="/brands" element={<Brands />} />
-                      <Route path="/banner/add" element={<AddBanner token={token} />} />
-                      <Route path="/banner/list" element={<BannerList token={token} />} />
+                      <Route path="/banner/add" element={<AddBanner />} />
+                      <Route path="/banners" element={<BannerList />} />
+                      <Route path="/blog/create" element={<BlogForm />} />
+                      <Route path="/blog/edit/:id" element={<BlogForm />} />
+                      <Route path="/blogs" element={<BlogList />} />
                       <Route
                         path="/orders"
                         element={<Orders token={token} />}

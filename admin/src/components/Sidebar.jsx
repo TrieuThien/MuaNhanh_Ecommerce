@@ -17,6 +17,7 @@ import {
   FaBook,
   FaEnvelope,
   FaSync,
+  FaBlog,
 } from "react-icons/fa";
 import { MdDashboard, MdAnalytics, MdInventory } from "react-icons/md";
 import { BiPackage } from "react-icons/bi";
@@ -173,8 +174,30 @@ const Sidebar = () => {
         {
           title: "Banner List",
           icon: <FaList />,
-          path: "/banner/list",
+          path: "/banners",
           description: "Manage all banners",
+        },
+      ],
+    },
+    {
+      title: "Blog",
+      icon: <FaBlog />,
+      path: "#",
+      description: "Manage blog posts",
+      badge: null,
+      isCategory: true,
+      children: [
+        {
+          title: "Create Blog",
+          icon: <IoMdAdd />,
+          path: "/blog/create",
+          description: "Add new blog posts",
+        },
+        {
+          title: "Blog List",
+          icon: <FaList />,
+          path: "/blogs",
+          description: "Manage all blog posts",
         },
       ],
     },

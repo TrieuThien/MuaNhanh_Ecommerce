@@ -22,8 +22,7 @@ const Blog = () => {
               Blog Coming Soon
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We&apos;re working hard to bring you amazing content about
-              fashion, style tips, and the latest trends. Stay tuned!
+              We&apos;re working hard to bring you amazing content about products, latest news, and the newest consumer trends. Stay tuned!
             </p>
           </div>
 
@@ -34,11 +33,10 @@ const Blog = () => {
                 <IoPencilOutline className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Style Guides
+                Shopping Guides
               </h3>
               <p className="text-gray-600">
-                Expert fashion advice and styling tips to help you look your
-                best.
+                Expert tips and product reviews to help you make the best choices.
               </p>
             </div>
 
@@ -47,11 +45,10 @@ const Blog = () => {
                 <IoCalendarOutline className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Seasonal Trends
+                Consumer Trends & Seasonal Essentials
               </h3>
               <p className="text-gray-600">
-                Stay updated with the latest fashion trends and seasonal
-                collections.
+                Stay updated with the latest market insights and seasonal product collections.
               </p>
             </div>
 
@@ -63,7 +60,7 @@ const Blog = () => {
                 Brand Stories
               </h3>
               <p className="text-gray-600">
-                Discover the stories behind your favorite brands and designers.
+                Discover the stories behind your favorite brands.
               </p>
             </div>
           </div>
