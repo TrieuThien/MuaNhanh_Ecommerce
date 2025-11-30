@@ -45,7 +45,7 @@ const About = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              About MuaNhanh Shopping
+              About MuaNhanh Ecommerce
             </h1>
             <p className="text-xl text-gray-300 leading-relaxed">
               We&apos;re passionate about bringing you the best shopping
@@ -96,7 +96,7 @@ const About = () => {
               </h2>
               <div className="space-y-4 text-gray-700 leading-relaxed">
                 <p>
-                  Founded in 2019, MuaNhanh Shopping began with a simple mission:
+                  Founded in 2025, MuaNhanh Ecommerce began with a simple mission:
                   to make quality products accessible to everyone, everywhere.
                   What started as a small online store has grown into a trusted
                   marketplace serving customers across the globe.

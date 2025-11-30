@@ -39,7 +39,7 @@ const InteractiveMap = () => {
             <FaMapMarkerAlt className="text-4xl text-red-600 drop-shadow-lg" />
             <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-lg p-2 min-w-max">
               <p className="text-sm font-semibold text-gray-900 whitespace-nowrap">
-                MuaNhanh Shopping
+                MuaNhanh Ecommerce
               </p>
             </div>
           </div>
@@ -62,7 +62,7 @@ const InteractiveMap = () => {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <h3 className="font-bold text-gray-900 text-lg mb-2">
-              MuaNhanh Shopping
+              MuaNhanh Ecommerce
             </h3>
             <div className="space-y-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">

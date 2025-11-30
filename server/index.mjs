@@ -18,12 +18,10 @@ initSocket(server);
 const port = process.env.PORT;
 
 const allowedOrigins = [
+  // Add production URLs
   process.env.ADMIN_URL,
   process.env.CLIENT_URL,
-  // Add production URLs
-  "https://orebiclient.reactbd.com",
-  "https://orebiadmin.reactbd.com",
-
+ 
   // Add localhost for development
   "http://localhost:5174",
   "http://localhost:5173",

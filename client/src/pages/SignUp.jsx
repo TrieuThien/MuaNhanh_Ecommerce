@@ -152,7 +152,7 @@ const SignUp = () => {
                 Create Account
               </h1>
               <p className="text-gray-600">
-                Join Muanhanh Shopping and start your journey
+                Join MuaNhanh Ecommerce and start your journey
               </p>
             </div>
 
@@ -176,9 +176,8 @@ const SignUp = () => {
                     type="text"
                     value={clientName}
                     onChange={handleName}
-                    className={`block w-full pl-10 pr-3 py-3 border ${
-                      errClientName ? "border-red-300" : "border-gray-300"
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-colors`}
+                    className={`block w-full pl-10 pr-3 py-3 border ${errClientName ? "border-red-300" : "border-gray-300"
+                      } rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-colors`}
                     placeholder="Enter your full name"
                   />
                 </div>
@@ -212,9 +211,8 @@ const SignUp = () => {
                     type="email"
                     value={email}
                     onChange={handleEmail}
-                    className={`block w-full pl-10 pr-3 py-3 border ${
-                      errEmail ? "border-red-300" : "border-gray-300"
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-colors`}
+                    className={`block w-full pl-10 pr-3 py-3 border ${errEmail ? "border-red-300" : "border-gray-300"
+                      } rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-colors`}
                     placeholder="Enter your email"
                   />
                 </div>
@@ -248,9 +246,8 @@ const SignUp = () => {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={handlePassword}
-                    className={`block w-full pl-10 pr-12 py-3 border ${
-                      errPassword ? "border-red-300" : "border-gray-300"
-                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-colors`}
+                    className={`block w-full pl-10 pr-12 py-3 border ${errPassword ? "border-red-300" : "border-gray-300"
+                      } rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-colors`}
                     placeholder="Create a strong password"
                   />
                   <button
@@ -341,11 +338,10 @@ const SignUp = () => {
                 whileTap={{ scale: checked ? 0.98 : 1 }}
                 type="submit"
                 disabled={!checked || isLoading}
-                className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white transition-all duration-200 ${
-                  checked
+                className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white transition-all duration-200 ${checked
                     ? "bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                     : "bg-gray-400 cursor-not-allowed"
-                } disabled:opacity-50`}
+                  } disabled:opacity-50`}
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
