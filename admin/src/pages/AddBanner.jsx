@@ -96,7 +96,7 @@ const BannerManager = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
+    <div className="p-6 max-w-7xl mx-auto xl:max-w-5xl bg-white rounded-xl shadow-sm border border-gray-200">
       <div className="flex items-center gap-3 mb-6 sm:mb-8">
         <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
           <IoMdAdd className="text-white text-xl" />
@@ -111,7 +111,7 @@ const BannerManager = () => {
         </div>
       </div>
       {/* Form */}
-      <form onSubmit={handleSubmit} className="bg-white mt-4  p-6 rounded-lg shadow-md mb-8">
+      <form onSubmit={handleSubmit} className="mb-8">
         {/* Image Upload Section */}
         <div className="bg-gray-50 rounded-lg p-4 sm:p-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">

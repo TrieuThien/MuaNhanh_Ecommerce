@@ -7,6 +7,8 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { IoMdCloudUpload, IoMdAdd } from 'react-icons/io';
 import { FaTimes, FaEdit, FaTrash, FaEye, FaEyeSlash } from 'react-icons/fa';
+import Title from "../components/ui/title";
+
 
 const BannerManager = () => {
   const [banners, setBanners] = useState([]);
@@ -159,18 +161,24 @@ const BannerManager = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Manage Banners</h1>
-          <p className="text-gray-600 mt-1">Customize the banners displayed on the homepage</p>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Manage Banners
+            </Title>
+            <p className="text-gray-600">
+              Customize the banners displayed on the homepage
+            </p>
+          </div>
+          <button
+            onClick={() => openModal()}
+            className="mt-4 sm:mt-0 flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg hover:bg-gray-700 transition"
+          >
+            <IoMdAdd className="text-xl" />
+            Add New Banner
+          </button>
         </div>
-        <button
-          onClick={() => openModal()}
-          className="mt-4 sm:mt-0 flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg hover:bg-indigo-700 transition"
-        >
-          <IoMdAdd className="text-xl" />
-          Add New Banner
-        </button>
       </div>
 
       {/* Stats */}
@@ -198,9 +206,8 @@ const BannerManager = () => {
           {banners.map((banner) => (
             <div
               key={banner._id}
-              className={`relative group bg-white rounded-xl shadow-md overflow-hidden border-2 transition-all ${
-                banner.isActive ? 'border-gray-300' : 'border-transparent'
-              }`}
+              className={`relative group bg-white rounded-xl shadow-md overflow-hidden border-2 transition-all ${banner.isActive ? 'border-gray-300' : 'border-transparent'
+                }`}
             >
               <div className="aspect-w-16 aspect-h-9 h-56 overflow-hidden">
                 <img
@@ -222,11 +229,10 @@ const BannerManager = () => {
 
                 <div className="mt-4 flex justify-between items-center">
                   <span
-                    className={`text-xs px-3 py-1 rounded-full font-medium ${
-                      banner.isActive
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
+                    className={`text-xs px-3 py-1 rounded-full font-medium ${banner.isActive
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-600'
+                      }`}
                   >
                     {banner.isActive ? 'Showing' : 'Hidden'}
                   </span>

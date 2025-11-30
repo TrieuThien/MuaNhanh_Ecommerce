@@ -21,6 +21,7 @@ import {
   FaMapMarkerAlt,
   FaPhone,
 } from "react-icons/fa";
+import Title from "../components/ui/title";
 
 const Invoice = () => {
   const [orders, setOrders] = useState([]);
@@ -293,34 +294,36 @@ const Invoice = () => {
   return (
     <div className="p-4 sm:p-6">
       {/* Header */}
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Invoice Management
-          </h1>
-          <p className="text-gray-600">
-            Generate invoices from customer orders
-          </p>
-        </div>
-        <div className="mt-4 sm:mt-0 flex gap-3">
-          <button
-            onClick={fetchOrders}
-            disabled={loading}
-            className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            <FaSync className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-            Refresh
-          </button>
-          <button
-            onClick={() =>
-              selectedOrders.length > 0 && generateInvoice(selectedOrders)
-            }
-            disabled={selectedOrders.length === 0}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            <FaFileInvoice className="w-4 h-4" />
-            Generate Invoice ({selectedOrders.length})
-          </button>
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Invoice Management
+            </Title>
+            <p className="text-gray-600">
+              Manage customer orders and track order statuses.
+            </p>
+          </div>
+          <div className="mt-4 sm:mt-0 flex gap-3">
+            <button
+              onClick={fetchOrders}
+              disabled={loading}
+              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <FaSync className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+              Refresh
+            </button>
+            <button
+              onClick={() =>
+                selectedOrders.length > 0 && generateInvoice(selectedOrders)
+              }
+              disabled={selectedOrders.length === 0}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            >
+              <FaFileInvoice className="w-4 h-4" />
+              Generate Invoice ({selectedOrders.length})
+            </button>
+          </div>
         </div>
       </div>
 

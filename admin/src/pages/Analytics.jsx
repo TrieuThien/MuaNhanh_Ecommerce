@@ -10,6 +10,7 @@ import { MdTrendingUp, MdTrendingDown } from "react-icons/md";
 import axios from "axios";
 import { serverUrl } from "../../config";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart, Bar, BarChart } from "recharts";
+import Title from "../components/ui/title";
 
 // Fake data generator for testing
 // const generateMockData = (year, month) => {
@@ -63,14 +64,14 @@ const Analytics = () => {
 
   const { token } = useSelector((state) => state.auth);
 
-  // Khởi tạo đúng ngay từ đầu
+  // Initialize selected month and year to current month and year
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
 
   const [selectedMonth, setSelectedMonth] = useState(currentMonth);
   const [selectedYear, setSelectedYear] = useState(currentYear);
 
-  // Tạo monthKey đúng định dạng: "2025-04"
+  // Create monthKey in the correct format: "2025-04"
   const monthKey = `${selectedYear}-${String(selectedMonth).padStart(2, "0")}`;
 
   const [stats, setStats] = useState({
@@ -87,7 +88,7 @@ const Analytics = () => {
   const [chartData, setChartData] = useState([]);
   const [chartLoading, setChartLoading] = useState(false);
 
-  // Chỉ gọi API khi monthKey đã hợp lệ và token có sẵn
+  // Only call API when monthKey is valid and token is available
   const fetchStatistics = useCallback(async () => {
     if (!token || !monthKey || monthKey.includes("undefined")) return;
 
@@ -195,14 +196,23 @@ const Analytics = () => {
 
   return (
     <div className="p-6">
+      {/* Header */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Analytics Dashboard
+            </Title>
+            <p className="text-gray-600">
+              {"Track your business performance and insights (In monthly view - compared to the previous month - only applied completed orders)."}
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-2">Last calculated at: {stats.calculatedAt ? new Date(stats.calculatedAt).toLocaleString() : "N/A"}</p>
+            </p>
+          </div>
+        </div>
+      </div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Analytics Dashboard
-        </h1>
-        <p className="text-gray-600">
-          {"Track your business performance and insights (In monthly view - compared to the previous month - only applied completed orders)."}
-        </p>
-        <p className="text-sm text-gray-500 mt-2">Last calculated at: {stats.calculatedAt ? new Date(stats.calculatedAt).toLocaleString() : "N/A"}</p>
         <div className="mt-4 flex flex-col gap-4 sm:flex-row">
           {/* Month */}
           <div className="w-full sm:w-48">

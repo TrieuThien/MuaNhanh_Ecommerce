@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useState, useEffect, useCallback } from "react";
 import { serverUrl } from "../../config";
+import Title from "../components/ui/title";
+
 
 const Inventory = () => {
   const { token } = useSelector((state) => state.auth);
@@ -107,13 +109,18 @@ const Inventory = () => {
 
   return (
     <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Inventory Management
-        </h1>
-        <p className="text-gray-600">
-          Monitor and manage your product inventory
-        </p>
+      {/* Header */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Inventory Management
+            </Title>
+            <p className="text-gray-600">
+              Monitor and manage your product inventory
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Inventory Stats */}

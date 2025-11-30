@@ -4,8 +4,9 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { serverUrl } from '../../config';
 import { useParams, useNavigate } from 'react-router-dom';
-import { IoMdCloudUpload } from 'react-icons/io';
-import { FaTimes } from 'react-icons/fa';
+import { IoMdCloudUpload, IoMdAdd } from 'react-icons/io';
+import { FaTimes, FaEdit } from 'react-icons/fa';
+import Title from "../components/ui/title";
 
 const BlogForm = () => {
 	const { id } = useParams();
@@ -115,11 +116,39 @@ const BlogForm = () => {
 	};
 
 	return (
-		<div className="p-6 max-w-5xl mx-auto">
-			<h1 className="text-3xl font-bold mb-8">{isEdit ? 'Edit Blog Post' : 'Create New Blog Post'}</h1>
+		<div className="p-6 max-w-7xl mx-auto xl:max-w-5xl bg-white rounded-xl shadow-sm border border-gray-200">
+			{isEdit ? (
+				<div className="flex items-center gap-3 mb-6 sm:mb-8">
+					<div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+						<FaEdit className="text-white text-xl" />
+					</div>
+					<div>
+						<Title className="text-xl sm:text-2xl font-bold text-gray-800">
+							Edit Blog
+						</Title>
+						<p className="text-sm text-gray-500 mt-1">
+							Edit the blog post details.
+						</p>
+					</div>
+				</div>
+			) : (
+				<div className="flex items-center gap-3 mb-6 sm:mb-8">
+					<div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+						<IoMdAdd className="text-white text-xl" />
+					</div>
+					<div>
+						<Title className="text-xl sm:text-2xl font-bold text-gray-800">
+							Add New Blog
+						</Title>
+						<p className="text-sm text-gray-500 mt-1">
+							Create a new blog post for your website.
+						</p>
+					</div>
+				</div>
+			)}
 
 			<form onSubmit={handleSubmit} className="space-y-6">
-				<div className="bg-white rounded-xl shadow p-6">
+				<div className="bg-gray-50 rounded-lg p-4 sm:p-6">
 					<label className="block text-sm font-medium mb-3">Featured Image</label>
 					<label className="block cursor-pointer">
 						<div className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center hover:border-blue-400">
@@ -142,8 +171,8 @@ const BlogForm = () => {
 					</label>
 				</div>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<div> 
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 rounded-lg p-4 sm:p-6">
+					<div>
 						<label htmlFor='Title' className='ml-2'>Title *</label>
 						<input
 							type="text"
@@ -166,7 +195,7 @@ const BlogForm = () => {
 						/>
 					</div>
 				</div>
-				<div>
+				<div className='bg-gray-50 rounded-lg p-4 sm:p-6'>
 					<label htmlFor='Excerpt' className='ml-2'>Short Description</label>
 					<textarea
 						placeholder="Write short description here (max 300 characters)"
@@ -177,7 +206,7 @@ const BlogForm = () => {
 					/>
 				</div>
 
-				<div>
+				<div className='bg-gray-50 rounded-lg p-4 sm:p-6'>
 					<label htmlFor='Content' className='ml-2'>Content *</label>
 					<textarea
 						placeholder="Write content here..."
@@ -188,7 +217,7 @@ const BlogForm = () => {
 						required
 					/>
 				</div>
-				<div>
+				<div className='bg-gray-50 rounded-lg p-4 sm:p-6'>
 					<label htmlFor='Tags' className='ml-2'>Tags</label>
 					<input
 						type="text"
@@ -199,7 +228,7 @@ const BlogForm = () => {
 					/>
 				</div>
 
-				<div className="flex items-center gap-4">
+				<div className="flex items-center gap-4 bg-gray-50 rounded-lg p-4 sm:p-6">
 					<label className="flex items-center gap-2 cursor-pointer">
 						<input
 							type="checkbox"

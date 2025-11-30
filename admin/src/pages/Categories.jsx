@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Container from "../components/Container";
+import Title from "../components/ui/title";
 import {
   FaPlus,
   FaEdit,
@@ -106,7 +107,7 @@ const Categories = () => {
       const url = editingCategory
         ? `${import.meta.env.VITE_BACKEND_URL}/api/category/${editingCategory._id}`
         : `${import.meta.env.VITE_BACKEND_URL}/api/category`;
-      
+
       const response = await fetch(url, {
         method: editingCategory ? "PUT" : "POST",
         headers: {
@@ -210,32 +211,36 @@ const Categories = () => {
     <Container>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Categories
-            </h1>
-            <p className="text-gray-600 mt-1">Manage product categories</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={fetchCategories}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-              title="Refresh Categories"
-            >
-              <FaSync className="w-4 h-4" />
-              Refresh
-            </button>
-            <button
-              onClick={() => openModal()}
-              className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <FaPlus />
-              Add Category
-            </button>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                Categories
+              </Title>
+              <p className="text-gray-600">
+                Manage product categories
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={fetchCategories}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                title="Refresh Categories"
+              >
+                <FaSync className="w-4 h-4" />
+                Refresh
+              </button>
+              <button
+                onClick={() => openModal()}
+                className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <FaPlus />
+                Add Category
+              </button>
+            </div>
           </div>
         </div>
-
+      
         {/* Search and Filter */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="relative flex-1">
@@ -543,8 +548,8 @@ const Categories = () => {
                     {submitting
                       ? "Saving..."
                       : editingCategory
-                      ? "Update"
-                      : "Create"}
+                        ? "Update"
+                        : "Create"}
                   </button>
                 </div>
               </form>

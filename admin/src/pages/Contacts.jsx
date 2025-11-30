@@ -14,6 +14,7 @@ import Container from "../components/Container";
 import SkeletonLoader from "../components/SkeletonLoader";
 import toast from "react-hot-toast";
 import { serverUrl } from "../../config";
+import Title from "../components/ui/title";
 
 
 const statusColors = {
@@ -206,12 +207,12 @@ const Contacts = () => {
     <div className="p-6">
       <Container>
         {/* Header */}
-        <div className="mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                 Contact Messages
-              </h1>
+              </Title>
               <p className="text-gray-600">
                 Manage customer inquiries and support requests
               </p>
@@ -370,9 +371,8 @@ const Contacts = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                            statusColors[contact.status]
-                          }`}
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColors[contact.status]
+                            }`}
                         >
                           {statusIcons[contact.status]}
                           {contact.status.charAt(0).toUpperCase() +
@@ -512,9 +512,8 @@ const Contacts = () => {
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Status:</h4>
                   <span
-                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium border ${
-                      statusColors[selectedContact.status]
-                    }`}
+                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium border ${statusColors[selectedContact.status]
+                      }`}
                   >
                     {statusIcons[selectedContact.status]}
                     {selectedContact.status.charAt(0).toUpperCase() +

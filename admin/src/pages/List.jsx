@@ -19,6 +19,8 @@ import TagsInput from "../components/TagsInput";
 import PropTypes from "prop-types";
 import Input, { Label } from "../components/ui/input";
 import SmallLoader from "../components/SmallLoader";
+import Title from "../components/ui/title";
+
 
 const List = ({ token }) => {
   const [list, setList] = useState([]);
@@ -332,29 +334,33 @@ const List = ({ token }) => {
     <Container>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Products
-            </h1>
-            <p className="text-gray-600 mt-1">Manage your product inventory</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={fetchList}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-              title="Refresh Products"
-            >
-              <FaSync className="w-4 h-4" />
-              Refresh
-            </button>
-            <Link
-              to="/add"
-              className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <FaPlus />
-              Add Product
-            </Link>
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                Products
+              </Title>
+              <p className="text-gray-600">
+                Manage your product inventory
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={fetchList}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                title="Refresh Products"
+              >
+                <FaSync className="w-4 h-4" />
+                Refresh
+              </button>
+              <Link
+                to="/add"
+                className="flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <FaPlus />
+                Add Product
+              </Link>
+            </div>
           </div>
         </div>
 

@@ -22,6 +22,7 @@ import {
   FaEye,
 } from "react-icons/fa";
 
+
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -265,16 +266,26 @@ const Orders = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-3 sm:p-4 lg:p-6">
-      <div className="flex items-center justify-between mb-6">
-        <Title>Orders Management</Title>
-        <button
-          onClick={fetchOrders}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          title="Refresh Orders"
-        >
-          <FaSync className="w-4 h-4" />
-          Refresh
-        </button>
+      {/* Header */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+              Orders Management
+            </Title>
+            <p className="text-gray-600">
+              Manage customer orders and track order statuses.
+            </p>
+          </div>
+          <button
+            onClick={fetchOrders}
+            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+            title="Refresh Orders"
+          >
+            <FaSync className="w-4 h-4" />
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Stats Cards */}

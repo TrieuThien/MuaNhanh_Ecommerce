@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { serverUrl } from '../../config';
 import { Link } from 'react-router-dom';
 import { FaEdit, FaTrash, FaEye, FaEyeSlash, FaPlus } from 'react-icons/fa';
+import Title from "../components/ui/title";
 
 const BlogList = () => {
 	const [blogs, setBlogs] = useState([]);
@@ -46,16 +47,27 @@ const BlogList = () => {
 	if (loading) return <div className="p-8 text-center">Loading...</div>;
 	return (
 		<div className="p-6 max-w-7xl mx-auto">
-			<div className="flex justify-between items-center mb-8">
-				<h1 className="text-3xl font-bold">Blog Management</h1>
-				<Link
-					to="/blog/create"
-					className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2"
-				>
-					<FaPlus /> Create New Blog
-				</Link>
+			{/* Header */}
+			<div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-6">
+				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+					<div>
+						<Title className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+							Blog Management
+						</Title>
+						<p className="text-gray-600">
+							Management of blog posts for your website.
+						</p>
+					</div>
+					<Link
+						to="/blog/create"
+						className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+					>
+						<FaPlus /> Create New Blog
+					</Link>
+				</div>
 			</div>
 
+			{/* Blog List */}
 			{blogs.length === 0 ? (
 				<div className="text-center py-16 bg-gray-50 rounded-xl">
 					<p className="text-xl text-gray-600">No blogs available</p>
