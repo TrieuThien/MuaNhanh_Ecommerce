@@ -44,9 +44,9 @@ const LoginPage = () => {
       let response = await authService.adminLogin(formData);
 
       // If admin login fails, try user login
-      if (!response.success) {
-        response = await authService.userLogin(formData);
-      }
+      // if (!response.success) {
+      //   response = await authService.userLogin(formData);
+      // }
 
       if (response.success) {
         dispatch(
