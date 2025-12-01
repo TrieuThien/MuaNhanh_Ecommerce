@@ -20,6 +20,7 @@ import Checkout from "./pages/Checkout.jsx";
 import PaymentSuccess from "./pages/PaymentSuccess.jsx";
 import FAQ from "./pages/FAQ.jsx";
 import Blog from "./pages/Blog.jsx";
+import BlogDetail from "./pages/BlogDetail.jsx";
 
 const router = createBrowserRouter(
   [
@@ -50,6 +51,10 @@ const router = createBrowserRouter(
         {
           path: "/blog",
           element: <Blog />,
+        },
+        {
+          path: "/blog/:slug",
+          element: <BlogDetail />,
         },
         {
           path: "/offers",

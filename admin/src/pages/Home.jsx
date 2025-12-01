@@ -166,12 +166,11 @@ const Home = () => {
             Unable to Load Dashboard Data
           </h3>
           <p className="text-red-600 mb-4">{stats.error}</p>
-          <button
-            onClick={fetchStatistics}
+          <Link to="/login"
             className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
           >
             Try Again
-          </button>
+          </Link>
         </div>
       </div>
     );

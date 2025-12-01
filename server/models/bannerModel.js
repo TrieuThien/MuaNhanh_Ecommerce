@@ -6,17 +6,17 @@ const bannerSchema = new mongoose.Schema({
   subtitle: { type: String },
   description: { type: String },
   discount: { type: String },
-  from: { type: Number }, // giá khởi điểm
+  from: { type: Number }, 
   sale: { type: String },
-  image: { type: String, required: true }, // URL hoặc tên file ảnh
+  image: { type: String, required: true }, // Image URL or path
   buttonText: { type: String, default: 'Shop Now' },
-  isActive: { type: Boolean, default: false }, // bật/tắt hiển thị
-  order: { type: Number, default: 0 }, // thứ tự hiển thị (tùy chọn)
+  isActive: { type: Boolean, default: false }, // Toggle show banner
+  order: { type: Number, default: 0 }, // Display order (optional)
 }, {
   timestamps: true
 });
 
-// Giới hạn tối đa 10 banner active
+// Limit to a maximum of 10 active banners
 bannerSchema.pre('save', async function(next) {
   if (this.isActive) {
     const activeCount = await this.constructor.countDocuments({ 

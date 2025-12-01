@@ -2,6 +2,7 @@
 import blogModel from "../models/blogModel.js";
 import { cloudinary } from "../config/cloudinary.js";
 import fs from "fs";
+import mongoose from "mongoose";
 
 // Helper: Delete temp file
 const cleanupTempFile = (filePath) => {
@@ -21,15 +22,49 @@ export const getBlogsAdmin = async (req, res) => {
   }
 };
 
-// Get blog by ID
-export const getBlogById = async (req, res) => {
+// Get all published blogs (public)
+export const getBlogs = async (req, res) => {
   try {
-    const blog = await blogModel.findById(req.params.id);
+    const blogs = await blogModel.find({ isPublished: true }).sort({ publishedAt: -1 });
+    res.json({ success: true, blogs });
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Get blog by ID or slug (public)
+export const getBlogByIdOrSlug = async (req, res) => {
+  try {
+    const { identifier } = req.params;
+
+    let blog;
+
+    // 1. Priority find by slug
+    if (!mongoose.Types.ObjectId.isValid(identifier)) {
+      blog = await blogModel.findOne({ slug: identifier });
+    }
+
+    // 2. If not found by slug → try finding by _id
+    if (!blog && mongoose.Types.ObjectId.isValid(identifier)) {
+      blog = await blogModel.findById(identifier);
+    }
+
     if (!blog) {
       return res.status(404).json({ success: false, message: "Blog not found" });
     }
+
+    // If user → only allow viewing published blogs
+    if (!req.user || req.user.role !== "admin") {
+      if (!blog.isPublished) {
+        return res.status(404).json({ success: false, message: "Blog not found" });
+      }
+    }
+
     res.json({ success: true, blog });
   } catch (error) {
+    console.error("Get blog error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };

@@ -1,186 +1,139 @@
+// src/pages/Blog.jsx
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import { serverUrl } from "../../config";
+import Container from "../components/Container";
 import {
   IoCalendarOutline,
   IoBookOutline,
   IoPencilOutline,
+  IoTimeOutline,
 } from "react-icons/io5";
-import Container from "../components/Container";
-import Breadcrumbs from "../components/Breadcrumbs";
 
 const Blog = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await axios.get(`${serverUrl}/api/blogs`);
+        setBlogs(res.data.blogs || []);
+      } catch (err) {
+        console.error("Error loading blogs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchBlogs();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-2xl text-gray-600">Loading blogs...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Container className="py-8">
-        <Breadcrumbs currentPage="Blog" />
-
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Coming Soon Header */}
-          <div className="mb-12">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-900 rounded-full mb-6">
-              <IoBookOutline className="w-12 h-12 text-white" />
+        <div className="bg-gray-50 border-b border-gray-200">
+          <Container className="py-4">
+            <div className="flex flex-col space-y-2">
+              <h1 className="text-3xl font-bold text-gray-900">Blogs</h1>
+              <nav className="flex text-sm text-gray-500">
+                <a href="/" className="hover:text-gray-700 transition-colors">
+                  Home
+                </a>
+                <span className="mx-2">/</span>
+                <span className="text-gray-900">Blogs</span>
+              </nav>
             </div>
-            <h1 className="text-5xl font-bold text-gray-900 mb-4">
-              Blog Coming Soon
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              We&apos;re working hard to bring you amazing content about products, latest news, and the newest consumer trends. Stay tuned!
-            </p>
+          </Container>
+        </div>
+
+        <div className="mt-12 max-w-4xl mx-auto text-center mb-12">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-gray-900 rounded-full mb-6">
+            <IoBookOutline className="w-12 h-12 text-white" />
           </div>
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">Blog MuaNhanh</h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Update amazing content about products, latest news, and the newest consumer trends.
+          </p>
+        </div>
 
-          {/* Features Preview */}
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-                <IoPencilOutline className="w-8 h-8 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Shopping Guides
-              </h3>
-              <p className="text-gray-600">
-                Expert tips and product reviews to help you make the best choices.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-                <IoCalendarOutline className="w-8 h-8 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Consumer Trends & Seasonal Essentials
-              </h3>
-              <p className="text-gray-600">
-                Stay updated with the latest market insights and seasonal product collections.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-lg p-6 shadow-md">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-                <IoBookOutline className="w-8 h-8 text-purple-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Brand Stories
-              </h3>
-              <p className="text-gray-600">
-                Discover the stories behind your favorite brands.
-              </p>
-            </div>
+        {/* Blogs list */}
+        {blogs.length === 0 ? (
+          <div className="text-center py-16">
+            <p className="text-xl text-gray-500">No blog posts yet.</p>
+            <p className="text-gray-400 mt-2">We&apos;re working hard to bring you amazing content about products, latest news, and the newest consumer trends. Stay tuned!</p>
           </div>
-
-          {/* Mockup Blog Posts */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              What to Expect
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Mock Blog Post 1 */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden opacity-75">
-                <div className="h-48 bg-gradient-to-r from-pink-400 to-purple-600"></div>
-                <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <IoCalendarOutline className="w-4 h-4 mr-1" />
-                    Coming Soon
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    10 Must-Have Fashion Pieces for Every Season
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Discover the essential fashion pieces that will keep you
-                    stylish throughout the year...
-                  </p>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {blogs.map((blog) => (
+              <Link
+                key={blog._id}
+                to={`/blog/${blog.slug}`}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300 block group"
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={blog.featuredImage}
+                    alt={blog.title}
+                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-              </div>
 
-              {/* Mock Blog Post 2 */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden opacity-75">
-                <div className="h-48 bg-gradient-to-r from-blue-400 to-teal-600"></div>
                 <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
+                  <div className="flex items-center text-sm text-gray-500 mb-3">
                     <IoCalendarOutline className="w-4 h-4 mr-1" />
-                    Coming Soon
+                    {new Date(blog.createdAt).toLocaleDateString("vi-VN")}
+                    <span className="mx-2">•</span>
+                    <IoTimeOutline className="w-4 h-4 mr-1" />
+                    {blog.author || "MuaNhanh Team"}
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    How to Build a Capsule Wardrobe on a Budget
+
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                    {blog.title}
                   </h3>
-                  <p className="text-gray-600 text-sm">
-                    Learn how to create a versatile and stylish wardrobe without
-                    breaking the bank...
+
+                  <p className="text-gray-600 line-clamp-3">
+                    {blog.excerpt || "Details blog..."}
                   </p>
+
+                  {blog.tags && blog.tags.length > 0 && (
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {blog.tags.slice(0, 3).map((tag, i) => (
+                        <span
+                          key={i}
+                          className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                      {blog.tags.length > 3 && (
+                        <span className="text-xs text-gray-500">...</span>
+                      )}
+                    </div>
+                  )}
                 </div>
-              </div>
-
-              {/* Mock Blog Post 3 */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden opacity-75">
-                <div className="h-48 bg-gradient-to-r from-yellow-400 to-orange-600"></div>
-                <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <IoCalendarOutline className="w-4 h-4 mr-1" />
-                    Coming Soon
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Sustainable Fashion: Making Eco-Friendly Choices
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Explore how to make more sustainable fashion choices that
-                    are good for you and the planet...
-                  </p>
-                </div>
-              </div>
-
-              {/* Mock Blog Post 4 */}
-              <div className="bg-white rounded-lg shadow-md overflow-hidden opacity-75">
-                <div className="h-48 bg-gradient-to-r from-green-400 to-blue-600"></div>
-                <div className="p-6">
-                  <div className="flex items-center text-sm text-gray-500 mb-2">
-                    <IoCalendarOutline className="w-4 h-4 mr-1" />
-                    Coming Soon
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Styling Tips from Fashion Experts
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    Get insider tips from professional stylists on how to
-                    elevate your everyday looks...
-                  </p>
-                </div>
-              </div>
-            </div>
+              </Link>
+            ))}
           </div>
+        )}
 
-          {/* Newsletter Signup */}
-          <div className="bg-white rounded-lg shadow-md p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Be the First to Know
-            </h2>
-            <p className="text-gray-600 mb-6">
-              Subscribe to our newsletter to get notified when our blog launches
-              and receive exclusive fashion content.
-            </p>
-            <div className="flex flex-col sm:flex-row max-w-md mx-auto gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
-              />
-              <button className="bg-gray-900 text-white px-8 py-3 rounded-md hover:bg-gray-800 transition-colors duration-200">
-                Subscribe
-              </button>
-            </div>
-            <p className="text-sm text-gray-500 mt-4">
-              We respect your privacy. Unsubscribe at any time.
-            </p>
-          </div>
-
-          {/* Back to Shopping */}
-          <div className="mt-12">
-            <p className="text-gray-600 mb-4">
-              While you wait, check out our latest products!
-            </p>
-            <a
-              href="/shop"
-              className="inline-block bg-gray-900 text-white px-8 py-3 rounded-md hover:bg-gray-800 transition-colors duration-200"
-            >
-              Shop Now
-            </a>
-          </div>
+        {/* Back to shopping */}
+        <div className="text-center mt-12">
+          <Link
+            to="/shop"
+            className="inline-block bg-gray-900 text-white px-8 py-3 rounded-md hover:bg-gray-800 transition"
+          >
+            Shop Now
+          </Link>
         </div>
       </Container>
     </div>

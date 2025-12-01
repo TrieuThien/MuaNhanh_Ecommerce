@@ -7,6 +7,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { IoMdCloudUpload, IoMdAdd } from 'react-icons/io';
 import { FaTimes, FaEdit } from 'react-icons/fa';
 import Title from "../components/ui/title";
+import { Editor } from '@tinymce/tinymce-react';
 
 const BlogForm = () => {
 	const { id } = useParams();
@@ -208,13 +209,65 @@ const BlogForm = () => {
 
 				<div className='bg-gray-50 rounded-lg p-4 sm:p-6'>
 					<label htmlFor='Content' className='ml-2'>Content *</label>
-					<textarea
-						placeholder="Write content here..."
+					{/* <Editor
+						tinymceScriptSrc="/tinymce/tinymce.min.js"
+						initialValue={isEdit ? form.content : ''}
 						value={form.content}
-						onChange={e => setForm({ ...form, content: e.target.value })}
-						rows={12}
-						className="w-full border rounded-lg px-4 py-3 font-mono text-sm"
-						required
+						onEditorChange={(c) => setForm(prev => ({...prev, content: c}))}
+						init={{
+							height: 500,
+							menubar: true,
+							plugins: [
+								'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+								'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+								'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+							],
+							toolbar:
+								'undo redo | blocks | bold italic backcolor | ' +
+								'alignleft aligncenter alignright alignjustify | ' +
+								'bullist numlist outdent indent | link image | ' +
+								'removeformat | code | help',
+							content_style: "body { font-family: inherit; font-size: 16px }",
+							branding: false,
+							statusbar: true,
+						}}
+					/> */}
+					<Editor
+						tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.8.4/tinymce.min.js"
+						value={form.content}
+						onEditorChange={(c) => setForm(prev => ({ ...prev, content: c }))}
+						init={{
+							height: 800,
+							menubar: true,
+							plugins:
+								[
+									'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+									'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+									'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+								],
+							toolbar:
+								'undo redo | blocks | bold italic backcolor | ' +
+								'alignleft aligncenter alignright alignjustify | ' +
+								'bullist numlist outdent indent | link image | ' +
+								'removeformat | code | help',
+
+
+							content_style: `
+								body { font-family: Inter, sans-serif; font-size: 17px; line-height: 1.8; color: #1f2937; }
+								h1 { font-size: 2.5rem !important; font-weight: 800 !important; margin: 2.5rem 0 1rem !important; color: #111 !important; }
+								h2 { font-size: 2rem !important; font-weight: 700 !important; margin: 2rem 0 1rem !important; color: #1f2937 !important; }
+								h3 { font-size: 1.65rem !important; font-weight: 600 !important; margin: 1.8rem 0 0.8rem !important; color: #374151 !important; }
+								p  { margin-bottom: 1.4rem !important; }
+								img { border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); margin: 2.5rem auto; display: block; max-width: 100%; height: auto; }
+							`,
+
+
+							formats: {
+								alignleft: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'text-left' },
+								aligncenter: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'text-center' },
+								alignright: { selector: 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes: 'text-right' },
+							},
+						}}
 					/>
 				</div>
 				<div className='bg-gray-50 rounded-lg p-4 sm:p-6'>

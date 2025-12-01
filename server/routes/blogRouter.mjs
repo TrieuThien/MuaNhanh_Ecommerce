@@ -2,7 +2,8 @@
 import express from "express";
 import {
   getBlogsAdmin,
-  getBlogById,
+  getBlogs,
+  getBlogByIdOrSlug,
   createBlog,
   updateBlog,
   deleteBlog,
@@ -14,7 +15,8 @@ const blogRouter = express.Router();
 const routeValue = "/api/blogs";
 
 // Public
-blogRouter.get(`${routeValue}/:id`, getBlogById);
+blogRouter.get(`${routeValue}`, getBlogs);
+blogRouter.get(`${routeValue}/:identifier`, getBlogByIdOrSlug)
 
 // Admin only
 blogRouter.get(`${routeValue}`, adminAuth, getBlogsAdmin);

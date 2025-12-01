@@ -325,12 +325,11 @@ const Order = () => {
               Error Loading Orders
             </h2>
             <p className="text-gray-600 mb-4">{error}</p>
-            <button
-              onClick={fetchUserOrders}
+            <Link to="/signin"
               className="bg-gray-900 text-white px-6 py-2 rounded-md hover:bg-gray-800 transition-colors"
             >
               Try Again
-            </button>
+            </Link>
           </div>
         </div>
       </Container>
