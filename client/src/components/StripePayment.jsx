@@ -31,6 +31,11 @@ const CheckoutForm = ({ orderId, amount, onSuccess, onCancel }) => {
       return;
     }
 
+    if (cardError) {
+      toast.error(cardError);
+      return;
+    }
+    
     setIsProcessing(true);
     setCardError(null);
 
@@ -128,7 +133,7 @@ const CheckoutForm = ({ orderId, amount, onSuccess, onCancel }) => {
               <div className="text-white text-xs font-medium mb-2 opacity-80">
                 CARD NUMBER
               </div>
-      
+
               <div className="space-y-4">
 
                 {/* Card Number */}
