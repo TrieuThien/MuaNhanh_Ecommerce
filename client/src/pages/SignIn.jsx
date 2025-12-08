@@ -252,7 +252,7 @@ const SignIn = () => {
             </form>
 
             {/* Google Login Button */}
-            <div className="mt-6">
+            <div className="mt-6 w-full flex justify-center">
               <GoogleLoginButton />
             </div>
 

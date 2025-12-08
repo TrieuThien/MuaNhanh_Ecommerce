@@ -27,6 +27,7 @@ function GoogleLoginButton() {
       {
         theme: "outline",
         size: "large",
+        with: "100%",
       }
     );
   }, []);
