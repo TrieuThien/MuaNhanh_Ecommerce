@@ -2,7 +2,7 @@ import userModel from "../models/userModel.js";
 import productModel from "../models/productModel.js";
 import orderModel from "../models/orderModel.js";
 import DashboardStats from "../models/dashboardStatsModel.js";
-import AnalyticsDashboard from "../models/analyticsDashboardModel.js";
+import AnalyticsDashboard from "../models/analyticsModel.js";
 
 // Get dashboard statistics with caching
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes

@@ -15,6 +15,7 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 import Container from "../components/Container";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -356,6 +357,11 @@ const SignUp = () => {
                 )}
               </motion.button>
             </form>
+            
+            {/* Google Login Button */}
+            <div className="mt-6">
+              <GoogleLoginButton />
+            </div>
 
             {/* Divider */}
             <div className="mt-8">

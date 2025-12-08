@@ -15,6 +15,7 @@ import {
   FaArrowRight,
 } from "react-icons/fa";
 import Container from "../components/Container";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -249,6 +250,11 @@ const SignIn = () => {
                 )}
               </motion.button>
             </form>
+
+            {/* Google Login Button */}
+            <div className="mt-6">
+              <GoogleLoginButton />
+            </div>
 
             {/* Divider */}
             <div className="mt-8">
